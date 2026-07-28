@@ -320,6 +320,7 @@
   }
   .filter-group{display:flex;flex-direction:column;gap:8px;}
   .filter-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;}
+  .filter-hint{font-size:11px;color:var(--text-dim);margin-top:6px;}
   .filter-group select{
     background:var(--bg);border:1px solid var(--line);color:var(--text);
     padding:7px 10px;border-radius:5px;font-family:'Inter',sans-serif;font-size:13px;min-width:160px;
@@ -976,6 +977,7 @@
           <span class="chip" data-value="tarde">Tarde</span>
           <span class="chip" data-value="noche">Noche</span>
         </div>
+        <p class="filter-hint">Mañana: 5 a 12hs · Tarde: 12 a 19hs · Noche: 19 a 5hs</p>
       </div>
     </div>
 
@@ -1955,7 +1957,25 @@
   };
   const CITY_TO_PROVINCE = {
     'rosario':'Santa Fe','mar del plata':'Buenos Aires','bahia blanca':'Buenos Aires','la plata':'Buenos Aires',
-    'san nicolas':'Buenos Aires','tandil':'Buenos Aires','olavarria':'Buenos Aires'
+    'san nicolas':'Buenos Aires','tandil':'Buenos Aires','olavarria':'Buenos Aires','junin':'Buenos Aires',
+    'necochea':'Buenos Aires','pinamar':'Buenos Aires','villa gesell':'Buenos Aires',
+    'trelew':'Chubut','rawson':'Chubut','comodoro rivadavia':'Chubut','esquel':'Chubut','puerto madryn':'Chubut',
+    'resistencia':'Chaco','saenz peña':'Chaco',
+    'parana':'Entre Ríos','concordia':'Entre Ríos','gualeguaychu':'Entre Ríos','concepcion del uruguay':'Entre Ríos',
+    'san salvador de jujuy':'Jujuy','palpala':'Jujuy',
+    'santa rosa':'La Pampa','general pico':'La Pampa',
+    'posadas':'Misiones','puerto iguazu':'Misiones','obera':'Misiones',
+    'bariloche':'Río Negro','viedma':'Río Negro','general roca':'Río Negro','cipolletti':'Río Negro',
+    'tartagal':'Salta','oran':'Salta',
+    'villa mercedes':'San Luis',
+    'rio gallegos':'Santa Cruz','caleta olivia':'Santa Cruz','el calafate':'Santa Cruz',
+    'rafaela':'Santa Fe','venado tuerto':'Santa Fe',
+    'la banda':'Santiago del Estero',
+    'ushuaia':'Tierra del Fuego','rio grande':'Tierra del Fuego',
+    'tafi viejo':'Tucumán',
+    'villa carlos paz':'Córdoba','rio cuarto':'Córdoba','villa maria':'Córdoba',
+    'san rafael':'Mendoza','godoy cruz':'Mendoza','malargue':'Mendoza',
+    'san martin de los andes':'Neuquén','villa la angostura':'Neuquén','zapala':'Neuquén'
   };
 
   function parseNivel(raw){
@@ -2014,29 +2034,29 @@
   function inferProvincia(zonaText){
     const t = normStr(zonaText);
     if(!t) return {provincia: null, isAMBA: false};
-    let isAMBA = false;
-    if(t.includes('amba')) isAMBA = true;
-    for(const partido of AMBA_PARTIDOS){
-      if(t.includes(partido)){ isAMBA = true; break; }
-    }
+
+    // CABA (ciudad o barrios porteños) -> es AMBA, y su "provincia" es CABA, no Buenos Aires
     if(t.includes('caba') || t.includes('capital federal') || t.includes('ciudad autonoma')){
-      isAMBA = true;
-      return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA};
+      return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA: true};
     }
     for(const barrio of CABA_BARRIOS){
-      if(t.includes(barrio)){
-        isAMBA = true;
-        return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA};
-      }
+      if(t.includes(barrio)) return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA: true};
     }
+    // Partido del conurbano -> es AMBA, pero NO cuenta como "Buenos Aires" provincia
+    // (para no repetir el mismo entrenador en los dos filtros)
+    for(const partido of AMBA_PARTIDOS){
+      if(t.includes(partido)) return {provincia: null, isAMBA: true};
+    }
+    if(t.includes('amba')) return {provincia: null, isAMBA: true};
+
+    // Resto de la provincia de Buenos Aires u otras provincias (no son AMBA)
     for(const p of PROVINCIA_NAMES){
-      if(t.includes(p)) return {provincia: PROVINCIA_LABELS[p], isAMBA};
+      if(t.includes(p)) return {provincia: PROVINCIA_LABELS[p], isAMBA: false};
     }
     for(const city in CITY_TO_PROVINCE){
-      if(t.includes(city)) return {provincia: CITY_TO_PROVINCE[city], isAMBA};
+      if(t.includes(city)) return {provincia: CITY_TO_PROVINCE[city], isAMBA: false};
     }
-    if(isAMBA) return {provincia: 'Buenos Aires', isAMBA};
-    return {provincia: null, isAMBA};
+    return {provincia: null, isAMBA: false};
   }
 
   let coaches = [];
