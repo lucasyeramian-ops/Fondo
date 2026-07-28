@@ -995,7 +995,7 @@
 
     <div class="coach-form-wrap">
       <a href="https://docs.google.com/forms/d/e/1FAIpQLScIlPEdeMid-P5iExfllwNb_0P-jjRh6TNS3Pigp9Z_s5QR9g/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-solid">Soy entrenador, quiero cargar mis datos</a>
-      <p class="coach-form-note">Se abre en una pestaña nueva. Una vez que completes el formulario, tu ficha aparece automáticamente acá arriba.</p>
+      <p class="coach-form-note">Se abre en una pestaña nueva. Una vez que completes el formulario, tu ficha aparece automáticamente acá arriba. Solo podés aparecer una vez: si volvés a cargar el formulario con el mismo nombre, tu ficha anterior se reemplaza por la nueva (no queda duplicada).</p>
     </div>
   </div>
 </section>
@@ -1991,7 +1991,7 @@
     const t = normStr(raw);
     const keys = new Set();
     if(!t) return keys;
-    if(t.includes('todo') || t.includes('cualquier')){
+    if(t.includes('todo') || t.includes('toda') || t.includes('cualquier')){
       return new Set(['calle', 'trail', 'pista']);
     }
     if(t.includes('calle') || t.includes('asfalto') || t.includes('ruta')) keys.add('calle');
@@ -2004,7 +2004,7 @@
     const t = normStr(raw);
     const keys = new Set();
     if(!t) return keys;
-    if(t.includes('todo') || t.includes('cualquier nivel') || t.includes('todo publico') || t.includes('todo el publico')){
+    if(t.includes('todo') || t.includes('toda') || t.includes('cualquier nivel') || t.includes('todo publico') || t.includes('todo el publico')){
       return new Set(['iniciacion', 'amateur', 'avanzado', 'federado', 'alto_rendimiento']);
     }
     if(t.includes('inicia')) keys.add('iniciacion');
