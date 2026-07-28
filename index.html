@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fondo — Todo para el corredor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1B1E24;
+    --bg-card:#23262D;
+    --bg-card-hi:#2B2F38;
+    --line:#33373F;
+    --text:#EDEAE2;
+    --text-dim:#9A9CA3;
+    --blue:#4A9FE0;
+    --orange:#FF6B4A;
+    --mint:#7FD9A8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:0 28px;}
+
+  /* NAV */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(27,30,36,0.85);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:64px;
+  }
+  .logo{
+    font-family:'Oswald',sans-serif;
+    font-size:22px;font-weight:700;
+    letter-spacing:0.06em;
+  }
+  .logo span{color:var(--orange);}
+  .navlinks{display:flex;gap:32px;font-size:14px;color:var(--text-dim);}
+  .navlinks a:hover{color:var(--text);}
+  .navlinks a:focus-visible, .btn:focus-visible, input:focus-visible{
+    outline:2px solid var(--blue);outline-offset:3px;
+  }
+  .navcta{
+    background:var(--blue);color:#0F1216;
+    padding:9px 18px;border-radius:4px;
+    font-weight:600;font-size:14px;
+  }
+
+  /* HERO */
+  .hero{padding:100px 0 60px;position:relative;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;color:var(--mint);
+    background:rgba(127,217,168,0.08);
+    border:1px solid rgba(127,217,168,0.25);
+    padding:5px 12px;border-radius:20px;
+    margin-bottom:24px;
+  }
+  .eyebrow::before{content:"●";font-size:9px;}
+  h1.hero-title{
+    font-size:clamp(38px,6vw,68px);
+    font-weight:600;
+    line-height:1.02;
+    max-width:820px;
+  }
+  h1.hero-title em{
+    font-style:normal;color:var(--orange);
+  }
+  .hero-sub{
+    margin-top:22px;font-size:18px;color:var(--text-dim);
+    max-width:560px;
+  }
+  .hero-actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .btn{
+    display:inline-block;padding:14px 26px;border-radius:5px;
+    font-weight:600;font-size:15px;cursor:pointer;border:1px solid transparent;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn-primary{background:var(--orange);color:#191114;}
+  .btn-primary:hover{transform:translateY(-2px);}
+  .btn-ghost{border-color:var(--line);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--text-dim);}
+  .btn-solid{background:var(--blue);color:#12151A;border:none;font-weight:700;}
+  .btn-solid:hover{transform:translateY(-2px);background:#5CAEEA;}
+
+  /* SIGNATURE: Riegel preview in hero */
+  .riegel-preview{
+    margin-top:64px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 28px;
+    max-width:560px;
+  }
+  .rp-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .rp-field{display:flex;flex-direction:column;gap:4px;}
+  .rp-field span{font-size:12px;color:var(--text-dim);}
+  .rp-field strong{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;}
+  .rp-field.hi strong{color:var(--mint);}
+  .rp-arrow{color:var(--text-dim);font-size:20px;}
+  .rp-note{margin-top:16px;font-size:13px;color:var(--text-dim);}
+
+  /* Calculators */
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:56px;}
+  @media (max-width:820px){.calc-grid{grid-template-columns:1fr;}}
+  .calc-card{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:24px;
+  }
+  .calc-title{font-size:19px;font-weight:500;margin-bottom:8px;}
+  .calc-desc{color:var(--text-dim);font-size:14px;margin-bottom:20px;}
+  .calc-info{color:var(--text-dim);font-size:13px;line-height:1.55;margin-bottom:20px;}
+  .calc-info strong{color:var(--text);font-weight:600;}
+  .calc-note{color:var(--text-dim);font-size:12px;line-height:1.5;margin-top:12px;}
+  .mode-toggle{display:flex;gap:8px;}
+  .mode-toggle .chip{cursor:pointer;}
+
+  .paces-table{margin-top:14px;}
+  .pace-table-title{font-size:12px;color:var(--text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;}
+  .pace-row{
+    display:flex;justify-content:space-between;padding:8px 0;
+    border-top:1px solid var(--line);font-size:13px;
+  }
+  .pace-row:first-of-type{border-top:none;}
+  .pace-row .mono{font-family:'JetBrains Mono',monospace;color:var(--mint);}
+
+  .ref-details{margin-top:16px;font-size:13px;}
+  .ref-details summary{cursor:pointer;color:var(--blue);font-size:13px;}
+  .ref-sub{font-size:12px;color:var(--text-dim);margin:14px 0 6px;}
+  .ref-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'JetBrains Mono',monospace;}
+  .ref-table th, .ref-table td{padding:6px 5px;border:1px solid var(--line);text-align:center;}
+  .ref-table th{color:var(--text-dim);font-family:'Inter',sans-serif;font-weight:500;}
+
+  .coach-bio{font-size:13px;color:var(--text-dim);margin-top:8px;line-height:1.5;}
+  .time-inputs{display:flex;align-items:center;gap:6px;}
+  .time-inputs input{width:100%;text-align:center;}
+  .time-inputs span{color:var(--text-dim);}
+  .calc-btn{width:100%;text-align:center;margin-top:6px;}
+  .calc-result{
+    margin-top:16px;padding:14px 16px;border-radius:6px;
+    background:var(--bg-card-hi);border:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-dim);
+    text-align:center;
+  }
+  .calc-result.filled{color:var(--mint);border-color:var(--mint);}
+
+  .tips-block{margin-top:8px;}
+  .tips-title{font-size:16px;font-weight:500;color:var(--text-dim);margin-bottom:18px;text-transform:uppercase;letter-spacing:0.04em;font-family:'Oswald',sans-serif;}
+  .tips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:820px){.tips-grid{grid-template-columns:1fr;}}
+
+  .tools-heading{
+    font-family:'Oswald',sans-serif;font-size:20px;font-weight:500;
+    margin:56px 0 20px;text-transform:none;
+  }
+
+  .karv-zones{margin-top:16px;display:flex;flex-direction:column;gap:12px;}
+  .karv-zone{font-size:12px;}
+  .karv-zone-head{display:flex;justify-content:space-between;margin-bottom:5px;}
+  .karv-zone-name{font-weight:600;}
+  .karv-zone-range{font-family:'JetBrains Mono',monospace;color:var(--text-dim);}
+  .karv-bar-track{background:var(--bg);border-radius:20px;height:8px;overflow:hidden;}
+  .karv-bar-fill{height:100%;border-radius:20px;}
+  .karv-z1 .karv-bar-fill{background:#9A9CA3;}
+  .karv-z2 .karv-bar-fill{background:var(--blue);}
+  .karv-z3 .karv-bar-fill{background:var(--mint);}
+  .karv-z4 .karv-bar-fill{background:#E8A23D;}
+  .karv-z5 .karv-bar-fill{background:var(--orange);}
+  .karv-zone-desc{color:var(--text-dim);margin-top:5px;line-height:1.4;}
+  .tip-card{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:18px;
+    font-size:14px;color:var(--text-dim);
+  }
+  .tip-tag{
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--blue);border:1px solid var(--blue);padding:3px 9px;border-radius:20px;
+    margin-bottom:10px;
+  }
+  .tip-card p{color:var(--text);}
+
+  /* Coaches */
+  .coach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px;}
+  @media (max-width:820px){.coach-grid{grid-template-columns:1fr;}}
+  .coach-card{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:20px;
+    transition:border-color .4s ease, box-shadow .4s ease;
+  }
+  .coach-highlight{border-color:var(--blue);box-shadow:0 0 0 3px rgba(74,159,224,0.25);}
+  .coach-card h3{font-family:'Inter',sans-serif;text-transform:none;font-size:17px;font-weight:600;margin-bottom:10px;letter-spacing:0;}
+  .coach-meta{font-size:13px;color:var(--text-dim);margin-bottom:6px;}
+  .coach-meta strong{color:var(--text);font-weight:600;}
+  .coach-contact{display:flex;gap:14px;margin-top:12px;font-size:13px;}
+  .coach-contact a{color:var(--blue);}
+  .coach-contact a:hover{text-decoration:underline;}
+  .coach-form-wrap{margin-top:8px;}
+  .coach-form{
+    margin-top:20px;background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+    padding:24px;max-width:480px;
+  }
+  .coach-form-note{font-size:12px;color:var(--text-dim);margin-top:14px;line-height:1.5;}
+  .hidden{display:none;}
+
+  /* Articles */
+  .articles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px;}
+  @media (max-width:820px){.articles-grid{grid-template-columns:1fr;}}
+  .article-card{
+    display:block;background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+    overflow:hidden;cursor:pointer;transition:border-color .15s ease, transform .15s ease;
+  }
+  .article-card:hover{border-color:var(--blue);transform:translateY(-3px);}
+  .article-cover{width:100%;height:150px;object-fit:cover;display:block;background:var(--bg-card-hi);}
+  .article-card-body{padding:18px 20px;}
+  .article-tag{
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;
+    color:var(--orange);border:1px solid var(--orange);padding:3px 9px;border-radius:20px;
+    margin-bottom:14px;
+  }
+  .article-card h3{font-family:'Inter',sans-serif;text-transform:none;font-size:16px;font-weight:600;line-height:1.3;margin-bottom:12px;letter-spacing:0;}
+  .article-meta{font-size:13px;color:var(--text-dim);}
+  .publish-cta{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+    background:var(--bg-card-hi);border:1px solid var(--blue);border-radius:10px;padding:26px 28px;
+  }
+  .publish-cta h3{font-family:'Oswald',sans-serif;font-size:19px;font-weight:500;text-transform:none;margin-bottom:6px;letter-spacing:0;}
+  .publish-cta p{color:var(--text-dim);font-size:14px;}
+
+  /* Article modal */
+  .article-modal-overlay.hidden{display:none;}
+  .article-modal-overlay{
+    position:fixed;inset:0;background:rgba(10,11,13,0.85);z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:24px;
+  }
+  .article-modal{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:12px;
+    max-width:640px;width:100%;max-height:88vh;overflow-y:auto;position:relative;
+  }
+  .article-modal-close{
+    position:absolute;top:14px;right:14px;z-index:2;
+    background:rgba(10,11,13,0.6);color:var(--text);border:none;border-radius:50%;
+    width:32px;height:32px;font-size:15px;cursor:pointer;
+  }
+  .article-modal-banner{width:100%;height:220px;object-fit:cover;background:var(--bg-card-hi);}
+  .article-modal-banner img{width:100%;height:100%;object-fit:cover;display:block;}
+  .article-modal-body{padding:28px;}
+  .article-modal-body h3{font-family:'Oswald',sans-serif;text-transform:none;font-size:24px;font-weight:500;margin:14px 0 10px;letter-spacing:0;}
+  .article-modal-author{color:var(--text-dim);font-size:14px;margin-bottom:22px;}
+
+  /* SECTIONS */
+  section{padding:90px 0;border-top:1px solid var(--line);}
+  .section-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;color:var(--text-dim);
+    margin-bottom:10px;
+  }
+  .section-label span{color:var(--orange);}
+  h2.section-title{font-size:clamp(26px,4vw,38px);font-weight:600;max-width:600px;margin-bottom:14px;}
+  .section-intro{color:var(--text-dim);max-width:560px;font-size:16px;margin-bottom:48px;}
+
+  /* Ranking table demo */
+  .board{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+    overflow:hidden;
+  }
+  .board-head{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 22px;border-bottom:1px solid var(--line);
+    font-size:13px;color:var(--text-dim);
+  }
+  .filters{display:flex;gap:8px;}
+  .chip{
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+    border:1px solid var(--line);padding:5px 12px;border-radius:20px;
+    color:var(--text-dim);
+  }
+  .chip.active{border-color:var(--blue);color:var(--blue);}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{
+    text-align:left;padding:12px 22px;font-size:11px;color:var(--text-dim);
+    font-weight:500;text-transform:uppercase;letter-spacing:0.05em;
+  }
+  td{padding:13px 22px;border-top:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;}
+  tr.highlight td{background:rgba(255,107,74,0.08);color:var(--orange);font-weight:700;}
+  .pos{color:var(--text-dim);}
+  .up{color:var(--mint);}
+  .down{color:var(--orange);}
+
+  /* Calendar */
+  .cal-header{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:20px;
+    flex-wrap:wrap;margin-bottom:32px;
+  }
+  .cal-add-btn{white-space:nowrap;}
+  .cal-filters{
+    display:flex;gap:32px;flex-wrap:wrap;margin-bottom:32px;
+    padding:18px 20px;background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+  }
+  .filter-group{display:flex;flex-direction:column;gap:8px;}
+  .filter-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.05em;}
+  .filter-group select{
+    background:var(--bg);border:1px solid var(--line);color:var(--text);
+    padding:7px 10px;border-radius:5px;font-family:'Inter',sans-serif;font-size:13px;min-width:160px;
+  }
+  .cal-empty{color:var(--text-dim);font-size:14px;padding:30px 0;text-align:center;}
+
+  .cal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media (max-width:820px){.cal-grid{grid-template-columns:1fr;} .cal-filters{gap:20px;}}
+  .cal-card{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+    padding:20px;transition:border-color .15s ease, transform .15s ease;
+    display:flex;flex-direction:column;
+  }
+  .cal-card:hover{border-color:var(--blue);transform:translateY(-3px);}
+  .cal-date{
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--blue);
+    margin-bottom:10px;
+  }
+  .cal-card h3{font-size:19px;font-weight:500;margin-bottom:6px;}
+  .cal-meta{color:var(--text-dim);font-size:13px;}
+  .cal-tag{
+    display:inline-block;margin-top:14px;font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--text-dim);border:1px solid var(--line);
+    padding:3px 9px;border-radius:20px;
+  }
+  .cal-badge{
+    display:inline-block;margin-top:10px;font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--orange);border:1px solid var(--orange);
+    padding:3px 9px;border-radius:20px;width:fit-content;
+  }
+  .cal-distances{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;}
+  .cal-distances span{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mint);
+    border:1px solid var(--mint);padding:3px 8px;border-radius:20px;
+  }
+  .cal-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+  .cal-btn{
+    flex:1;text-align:center;font-size:12px;padding:9px 10px;border-radius:5px;
+    font-weight:600;min-width:120px;
+  }
+  .cal-btn-primary{background:var(--orange);color:#191114;}
+  .cal-btn-ghost{border:1px solid var(--line);color:var(--text-dim);}
+  .cal-btn-ghost:hover{border-color:var(--blue);color:var(--text);}
+
+  /* Pacers */
+  .pacer-flow{display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;}
+  .coming-soon{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+    padding:40px;text-align:center;
+  }
+  .coming-soon p{color:var(--text-dim);margin-top:14px;font-size:14px;}
+  .pacer-form{
+    flex:1;min-width:280px;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:24px;
+  }
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;}
+  .field select, .field input{
+    width:100%;background:var(--bg);border:1px solid var(--line);
+    color:var(--text);padding:11px 12px;border-radius:5px;font-family:'Inter',sans-serif;font-size:14px;
+  }
+  .pacer-results{flex:1.3;min-width:300px;display:flex;flex-direction:column;gap:12px;}
+  .pacer-card{
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+  }
+  .pacer-id{display:flex;gap:12px;align-items:center;}
+  .avatar{
+    width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--mint));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;color:#12151A;
+  }
+  .pacer-name{font-size:14px;font-weight:600;}
+  .pacer-pb{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;}
+  .pacer-price{font-family:'JetBrains Mono',monospace;color:var(--mint);font-size:14px;text-align:right;}
+  .pacer-price span{display:block;font-size:11px;color:var(--text-dim);}
+
+  /* Waitlist */
+  .cta-section{
+    text-align:center;padding:110px 0;
+  }
+  .cta-section h2{font-size:clamp(30px,5vw,46px);max-width:700px;margin:0 auto 18px;}
+  .cta-section p{color:var(--text-dim);max-width:480px;margin:0 auto 34px;}
+  .waitform{
+    display:flex;gap:10px;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center;
+  }
+  .waitform input{
+    flex:1;min-width:220px;
+    background:var(--bg-card);border:1px solid var(--line);color:var(--text);
+    padding:14px 16px;border-radius:5px;font-size:14px;
+  }
+  .form-note{font-size:12px;color:var(--text-dim);margin-top:14px;}
+
+  footer{
+    border-top:1px solid var(--line);padding:36px 0;
+    display:flex;justify-content:space-between;align-items:center;
+    color:var(--text-dim);font-size:13px;flex-wrap:wrap;gap:10px;
+  }
+
+  [data-reveal]{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
+  [data-reveal].in{opacity:1;transform:translateY(0);}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">FON<span>DO</span></div>
+    <div class="navlinks">
+      <a href="#calculadoras">Calculadoras</a>
+      <a href="#calendario">Calendario</a>
+      <a href="#pacers">Pacers</a>
+      <a href="#entrenadores">Entrenadores</a>
+      <a href="#articulos">Artículos</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero" style="border-top:none;">
+  <div class="wrap">
+    <div class="eyebrow">En construcción — primeros artículos cargados</div>
+    <h1 class="hero-title">Todo lo que un corredor necesita, <em>en un solo lugar</em></h1>
+    <p class="hero-sub">Calculá tu marca proyectada, encontrá tu próxima carrera, contratá un pacer y leé lo que otros corredores tienen para contarte.</p>
+    <div class="hero-actions">
+      <a href="#calculadoras" class="btn btn-primary">Probar las calculadoras</a>
+      <a href="#articulos" class="btn btn-ghost">Ver artículos</a>
+    </div>
+
+    <div class="riegel-preview" data-reveal>
+      <div class="rp-row">
+        <div class="rp-field"><span>Corriste</span><strong>5K en 20:00</strong></div>
+        <div class="rp-arrow">→</div>
+        <div class="rp-field hi"><span>Tu 10K estimado</span><strong>41:30</strong></div>
+      </div>
+      <p class="rp-note">Test de Riegel — proyectá tu marca en cualquier distancia a partir de una carrera reciente</p>
+    </div>
+  </div>
+</section>
+
+<section id="calculadoras">
+  <div class="wrap">
+    <div class="section-label">01 — <span>Calculadoras</span></div>
+    <h2 class="section-title">Proyectá tu marca y tu nivel de forma física</h2>
+    <p class="section-intro">Cuatro herramientas clásicas del atletismo, calculadas al instante. Sin tener que buscar la fórmula ni hacer cuentas.</p>
+
+    <div class="calc-grid">
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Test de Riegel</h3>
+        <p class="calc-info"><strong>Qué es:</strong> una fórmula (Pete Riegel, 1977) que predice cuánto tardarías en correr una distancia distinta a partir de un tiempo ya corrido en otra.<br><strong>Para qué sirve:</strong> fijar objetivos realistas — si sabés tu marca en 10K, estimás qué tiempo te correspondería en otra distancia, o qué distancia te bancás en un tiempo determinado.</p>
+        <div class="field">
+          <label>Distancia corrida</label>
+          <select id="riegel-d1">
+            <option value="1">1K</option>
+            <option value="1.5">1.5K</option>
+            <option value="3">3K</option>
+            <option value="5" selected>5K</option>
+            <option value="8">8K</option>
+            <option value="10">10K</option>
+            <option value="15">15K</option>
+            <option value="21.0975">21K</option>
+            <option value="30">30K</option>
+            <option value="42.195">42K</option>
+            <option value="50">50K</option>
+          </select>
+        </div>
+        <div class="field time-field">
+          <label>Tiempo</label>
+          <div class="time-inputs">
+            <input type="number" id="riegel-h1" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="riegel-m1" min="0" max="59" placeholder="mm" value="20">
+            <span>:</span>
+            <input type="number" id="riegel-s1" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Estimar por</label>
+          <div class="mode-toggle">
+            <span class="chip active" id="riegel-mode-distancia-btn" onclick="setCalcMode('riegel','distancia')">Distancia</span>
+            <span class="chip" id="riegel-mode-tiempo-btn" onclick="setCalcMode('riegel','tiempo')">Tiempo</span>
+          </div>
+        </div>
+        <div class="field" id="riegel-distancia-group">
+          <label>Distancia a proyectar</label>
+          <select id="riegel-d2">
+            <option value="1">1K</option>
+            <option value="1.5">1.5K</option>
+            <option value="3">3K</option>
+            <option value="5">5K</option>
+            <option value="8">8K</option>
+            <option value="10" selected>10K</option>
+            <option value="15">15K</option>
+            <option value="21.0975">21K</option>
+            <option value="30">30K</option>
+            <option value="42.195">42K</option>
+            <option value="50">50K</option>
+          </select>
+        </div>
+        <div class="field time-field hidden" id="riegel-tiempo-group">
+          <label>Tiempo objetivo</label>
+          <div class="time-inputs">
+            <input type="number" id="riegel-h2" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="riegel-m2" min="0" max="59" placeholder="mm" value="45">
+            <span>:</span>
+            <input type="number" id="riegel-s2" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+
+        <button class="btn btn-primary calc-btn" onclick="calcRiegel()">Calcular</button>
+        <div class="calc-result" id="riegel-result">Tu marca estimada aparece acá</div>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Fórmula de Cameron</h3>
+        <p class="calc-info"><strong>Qué es:</strong> otro modelo de predicción de marcas (Cameron, 1996), pensado para ajustar mejor que Riegel en distancias muy cortas o muy largas.<br><strong>Para qué sirve:</strong> lo mismo que Riegel — proyectar tu tiempo u otra distancia — pero como segunda referencia para comparar, ya que cada fórmula pesa distinto la caída de ritmo según la distancia.</p>
+        <div class="field">
+          <label>Distancia corrida</label>
+          <select id="cameron-d1">
+            <option value="1">1K</option>
+            <option value="1.5">1.5K</option>
+            <option value="3">3K</option>
+            <option value="5" selected>5K</option>
+            <option value="8">8K</option>
+            <option value="10">10K</option>
+            <option value="15">15K</option>
+            <option value="21.0975">21K</option>
+            <option value="30">30K</option>
+            <option value="42.195">42K</option>
+            <option value="50">50K</option>
+          </select>
+        </div>
+        <div class="field time-field">
+          <label>Tiempo</label>
+          <div class="time-inputs">
+            <input type="number" id="cameron-h1" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="cameron-m1" min="0" max="59" placeholder="mm" value="20">
+            <span>:</span>
+            <input type="number" id="cameron-s1" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Estimar por</label>
+          <div class="mode-toggle">
+            <span class="chip active" id="cameron-mode-distancia-btn" onclick="setCalcMode('cameron','distancia')">Distancia</span>
+            <span class="chip" id="cameron-mode-tiempo-btn" onclick="setCalcMode('cameron','tiempo')">Tiempo</span>
+          </div>
+        </div>
+        <div class="field" id="cameron-distancia-group">
+          <label>Distancia a proyectar</label>
+          <select id="cameron-d2">
+            <option value="1">1K</option>
+            <option value="1.5">1.5K</option>
+            <option value="3">3K</option>
+            <option value="5">5K</option>
+            <option value="8">8K</option>
+            <option value="10" selected>10K</option>
+            <option value="15">15K</option>
+            <option value="21.0975">21K</option>
+            <option value="30">30K</option>
+            <option value="42.195">42K</option>
+            <option value="50">50K</option>
+          </select>
+        </div>
+        <div class="field time-field hidden" id="cameron-tiempo-group">
+          <label>Tiempo objetivo</label>
+          <div class="time-inputs">
+            <input type="number" id="cameron-h2" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="cameron-m2" min="0" max="59" placeholder="mm" value="45">
+            <span>:</span>
+            <input type="number" id="cameron-s2" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+
+        <button class="btn btn-primary calc-btn" onclick="calcCameron()">Calcular</button>
+        <div class="calc-result" id="cameron-result">Tu marca estimada aparece acá</div>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">VDOT</h3>
+        <p class="calc-info"><strong>Qué es:</strong> un índice creado por Jack Daniels que resume tu nivel de forma física aeróbica a partir de una marca reciente.<br><strong>Para qué sirve:</strong> calcular tus ritmos de entrenamiento por tipo de sesión — el número solo no le dice mucho a la mayoría, los ritmos sí.</p>
+        <div class="field">
+          <label>Distancia corrida (metros)</label>
+          <input type="number" id="vdot-dist" min="0" placeholder="ej. 5000" value="5000">
+        </div>
+        <div class="field time-field">
+          <label>Tiempo</label>
+          <div class="time-inputs">
+            <input type="number" id="vdot-h1" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="vdot-m1" min="0" max="59" placeholder="mm" value="20">
+            <span>:</span>
+            <input type="number" id="vdot-s1" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcVDOT()">Calcular</button>
+        <div class="calc-result" id="vdot-result">Tu VDOT estimado aparece acá</div>
+        <div class="paces-table" id="vdot-paces"></div>
+        <p class="calc-note">Es una aproximación, no un valor exacto — lo ideal es consultarlo con tu entrenador.</p>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Test de Cooper</h3>
+        <p class="calc-info"><strong>Qué es:</strong> un test (Kenneth Cooper, 1968) que estima tu VO2 máx a partir de la distancia que recorrés en 12 minutos a máximo esfuerzo.<br><strong>Para qué sirve:</strong> aproximar tu capacidad aeróbica sin necesidad de un laboratorio. Cargá la distancia recorrida <strong>en metros</strong> (no en kilómetros).</p>
+        <div class="field">
+          <label>Distancia recorrida en 12 min (metros)</label>
+          <input type="number" id="cooper-dist" min="0" placeholder="ej. 2800" value="2800">
+        </div>
+        <div class="field">
+          <label>Edad</label>
+          <select id="cooper-age">
+            <option value="13-19">13 a 19</option>
+            <option value="20-29" selected>20 a 29</option>
+            <option value="30-39">30 a 39</option>
+            <option value="40-49">40 a 49</option>
+            <option value="50-59">50 a 59</option>
+            <option value="60+">60 o más</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Sexo</label>
+          <select id="cooper-sex">
+            <option value="male">Masculino</option>
+            <option value="female">Femenino</option>
+          </select>
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcCooper()">Calcular</button>
+        <div class="calc-result" id="cooper-result">Tu VO2 máx estimado aparece acá</div>
+        <p class="calc-note">Esto es una estimación de campo. Para un resultado preciso, hacete una ergometría con un profesional.</p>
+
+        <details class="ref-details">
+          <summary>Ver tabla de referencia completa</summary>
+          <p class="ref-sub">Mujeres (ml/kg/min)</p>
+          <table class="ref-table">
+            <thead><tr><th>Edad</th><th>Muy malo</th><th>Malo</th><th>Regular</th><th>Bueno</th><th>Excelente</th><th>Superior</th></tr></thead>
+            <tbody>
+              <tr><td>13-19</td><td>&lt;25.0</td><td>25.0-30.9</td><td>31.0-34.9</td><td>35.0-38.9</td><td>39.0-41.9</td><td>&gt;41.9</td></tr>
+              <tr><td>20-29</td><td>&lt;23.6</td><td>23.6-28.9</td><td>29.0-32.9</td><td>33.0-36.9</td><td>37.0-41.0</td><td>&gt;41.0</td></tr>
+              <tr><td>30-39</td><td>&lt;22.8</td><td>22.8-26.9</td><td>27.0-31.4</td><td>31.5-35.6</td><td>35.7-40.0</td><td>&gt;40.0</td></tr>
+              <tr><td>40-49</td><td>&lt;21.0</td><td>21.0-24.4</td><td>24.5-28.9</td><td>29.0-32.8</td><td>32.9-36.9</td><td>&gt;36.9</td></tr>
+              <tr><td>50-59</td><td>&lt;20.2</td><td>20.2-22.7</td><td>22.8-26.9</td><td>27.0-31.4</td><td>31.5-35.7</td><td>&gt;35.7</td></tr>
+              <tr><td>60+</td><td>&lt;17.5</td><td>17.5-20.1</td><td>20.2-24.4</td><td>24.5-30.2</td><td>30.3-31.4</td><td>&gt;31.4</td></tr>
+            </tbody>
+          </table>
+          <p class="ref-sub">Hombres (ml/kg/min)</p>
+          <table class="ref-table">
+            <thead><tr><th>Edad</th><th>Muy malo</th><th>Malo</th><th>Regular</th><th>Bueno</th><th>Excelente</th><th>Superior</th></tr></thead>
+            <tbody>
+              <tr><td>13-19</td><td>&lt;35.0</td><td>35.0-38.3</td><td>38.4-45.1</td><td>45.2-50.9</td><td>51.0-55.9</td><td>&gt;55.9</td></tr>
+              <tr><td>20-29</td><td>&lt;33.0</td><td>33.0-36.4</td><td>36.5-42.4</td><td>42.5-46.4</td><td>46.5-52.4</td><td>&gt;52.4</td></tr>
+              <tr><td>30-39</td><td>&lt;31.5</td><td>31.5-35.4</td><td>35.5-40.9</td><td>41.0-44.9</td><td>45.0-49.4</td><td>&gt;49.4</td></tr>
+              <tr><td>40-49</td><td>&lt;30.2</td><td>30.2-33.5</td><td>33.6-38.9</td><td>39.0-43.7</td><td>43.8-48.0</td><td>&gt;48.0</td></tr>
+              <tr><td>50-59</td><td>&lt;26.1</td><td>26.1-30.9</td><td>31.0-35.7</td><td>35.8-40.9</td><td>41.0-45.3</td><td>&gt;45.3</td></tr>
+              <tr><td>60+</td><td>&lt;20.5</td><td>20.5-26.0</td><td>26.1-32.2</td><td>32.3-36.4</td><td>36.5-44.2</td><td>&gt;44.2</td></tr>
+            </tbody>
+          </table>
+        </details>
+      </div>
+    </div>
+
+    <div class="tips-block" data-reveal>
+      <h3 class="tips-title">Tips rápidos</h3>
+      <div class="tips-grid" id="tips-grid"></div>
+    </div>
+
+    <h3 class="tools-heading">Calculadoras y utilidades técnicas</h3>
+    <div class="calc-grid">
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Ritmo ↔ Velocidad</h3>
+        <p class="calc-info"><strong>Qué es:</strong> conversor entre ritmo (min/km) y velocidad (km/h).<br><strong>Para qué sirve:</strong> pasar de una unidad a otra rápido — útil si entrenás con reloj en ritmo pero tu cinta o tu entrenador hablan en km/h (o al revés).</p>
+        <div class="field">
+          <label>Convertir</label>
+          <div class="mode-toggle">
+            <span class="chip active" id="pace-mode-ritmo-btn" onclick="setPaceMode('ritmo')">Ritmo → Vel.</span>
+            <span class="chip" id="pace-mode-vel-btn" onclick="setPaceMode('vel')">Vel. → Ritmo</span>
+          </div>
+        </div>
+        <div class="field time-field" id="pace-ritmo-group">
+          <label>Ritmo (min/km)</label>
+          <div class="time-inputs">
+            <input type="number" id="pace-m" min="0" placeholder="mm" value="5">
+            <span>:</span>
+            <input type="number" id="pace-s" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+        <div class="field hidden" id="pace-vel-group">
+          <label>Velocidad (km/h)</label>
+          <input type="number" id="pace-kmh" min="0" step="0.1" placeholder="ej. 12" value="12">
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcPaceSpeed()">Calcular</button>
+        <div class="calc-result" id="pace-result">El resultado aparece acá</div>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Parciales en pista</h3>
+        <p class="calc-info"><strong>Qué es:</strong> a partir de un tiempo objetivo en una distancia de fondo en pista, calcula a qué ritmo tenés que pasar por vuelta (400m), cada 200m y cada 100m.<br><strong>Para qué sirve:</strong> planificar una carrera de pista o una serie larga sabiendo exactamente qué parciales tenés que marcar.</p>
+        <div class="field">
+          <label>Distancia</label>
+          <select id="track-dist">
+            <option value="800">800m</option>
+            <option value="1500" selected>1500m</option>
+            <option value="3000">3000m</option>
+            <option value="5000">5000m</option>
+            <option value="10000">10000m</option>
+          </select>
+        </div>
+        <div class="field time-field">
+          <label>Tiempo objetivo</label>
+          <div class="time-inputs">
+            <input type="number" id="track-h" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="track-m" min="0" max="59" placeholder="mm" value="5">
+            <span>:</span>
+            <input type="number" id="track-s" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcTrack()">Calcular</button>
+        <div class="calc-result" id="track-result">Tus parciales aparecen acá</div>
+        <div class="paces-table" id="track-paces"></div>
+
+        <details class="ref-details">
+          <summary>¿Cómo se usa una pista de atletismo?</summary>
+          <p class="ref-sub" style="margin-top:10px;">Una vuelta completa por el carril 1 (el más interno) son 400m. Se corre en sentido contrario a las agujas del reloj. Las líneas curvas pintadas en el piso marcan las distintas largadas: en carreras que dan vueltas completas por varios carriles (como los 400m), la largada está escalonada porque el carril exterior recorre más distancia en la misma vuelta. Para carreras de fondo (800m en adelante) generalmente se larga desde una línea curva y enseguida todos se meten al carril 1. Las marcas blancas cada 100m sobre el carril 1 sirven para controlar parciales durante el entrenamiento.</p>
+        </details>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Ajuste por clima</h3>
+        <p class="calc-info"><strong>Qué es:</strong> una corrección de ritmo basada en el punto de rocío (temperatura + humedad combinadas).<br><strong>Para qué sirve:</strong> saber cuánto más lento vas a ir en un día caluroso/húmedo aunque tu forma física sea la misma — para no frustrarte por "correr peor" cuando en realidad es el clima.</p>
+        <div class="field time-field">
+          <label>Tu ritmo habitual (min/km)</label>
+          <div class="time-inputs">
+            <input type="number" id="clima-m" min="0" placeholder="mm" value="5">
+            <span>:</span>
+            <input type="number" id="clima-s" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Temperatura (°C)</label>
+          <input type="number" id="clima-temp" placeholder="ej. 28" value="28">
+        </div>
+        <div class="field">
+          <label>Humedad (%)</label>
+          <input type="number" id="clima-hum" min="0" max="100" placeholder="ej. 70" value="70">
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcClima()">Calcular</button>
+        <div class="calc-result" id="clima-result">Tu ritmo ajustado aparece acá</div>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Zonas de Karvonen</h3>
+        <p class="calc-info"><strong>Qué es:</strong> el método de Karvonen calcula tus zonas de entrenamiento a partir de tu frecuencia cardíaca máxima y de reposo (frecuencia cardíaca de reserva).<br><strong>Para qué sirve:</strong> entrenar por pulsaciones sabiendo qué objetivo fisiológico cumple cada zona, no solo el número.</p>
+        <div class="field">
+          <label>FC máxima (ppm)</label>
+          <input type="number" id="karv-max" min="0" placeholder="ej. 190" value="190">
+        </div>
+        <div class="field">
+          <label>FC en reposo (ppm)</label>
+          <input type="number" id="karv-rest" min="0" placeholder="ej. 55" value="55">
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcKarvonen()">Calcular</button>
+        <div class="karv-zones" id="karv-zones"></div>
+        <p class="calc-note">Para el 100% de precisión hace falta una ergometría con gases o un test de lactato supervisado por un profesional del deporte.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calendario">
+  <div class="wrap">
+    <div class="cal-header">
+      <div>
+        <div class="section-label">02 — <span>Calendario</span></div>
+        <h2 class="section-title">Todas las carreras del país, en un solo lugar</h2>
+        <p class="section-intro">Fecha, distancia e inscripción de cada carrera relevante — sin recorrer diez cuentas de Instagram distintas para armar tu calendario.</p>
+      </div>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfJgvwyTdEp-WjINo0uh7UFIAg_2b7E5zUGoUg94xkX5H7c3Q/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-solid cal-add-btn">+ Sumar carrera</a>
+    </div>
+
+    <div class="cal-filters" data-reveal>
+      <div class="filter-group">
+        <span class="filter-label">Distancia</span>
+        <div class="mode-toggle" id="filter-distancia">
+          <span class="chip active" data-value="todas">Todas</span>
+          <span class="chip" data-value="5k">5K</span>
+          <span class="chip" data-value="10k">10K</span>
+          <span class="chip" data-value="21k">21K</span>
+          <span class="chip" data-value="42k">42K</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Tipo</span>
+        <div class="mode-toggle" id="filter-tipo">
+          <span class="chip active" data-value="todas">Todas</span>
+          <span class="chip" data-value="calle">Calle</span>
+          <span class="chip" data-value="trail">Trail</span>
+          <span class="chip" data-value="pista">Pista</span>
+          <span class="chip" data-value="cross">Cross Country</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Mes</span>
+        <select id="filter-mes">
+          <option value="todas">Todos</option>
+          <option value="0">Enero</option>
+          <option value="1">Febrero</option>
+          <option value="2">Marzo</option>
+          <option value="3">Abril</option>
+          <option value="4">Mayo</option>
+          <option value="5">Junio</option>
+          <option value="6">Julio</option>
+          <option value="7">Agosto</option>
+          <option value="8">Septiembre</option>
+          <option value="9">Octubre</option>
+          <option value="10">Noviembre</option>
+          <option value="11">Diciembre</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Provincia</span>
+        <select id="filter-provincia">
+          <option value="todas">Todas</option>
+          <option>Buenos Aires</option>
+          <option>Catamarca</option>
+          <option>Chaco</option>
+          <option>Chubut</option>
+          <option>Ciudad Autónoma de Buenos Aires</option>
+          <option>Córdoba</option>
+          <option>Corrientes</option>
+          <option>Entre Ríos</option>
+          <option>Formosa</option>
+          <option>Jujuy</option>
+          <option>La Pampa</option>
+          <option>La Rioja</option>
+          <option>Mendoza</option>
+          <option>Misiones</option>
+          <option>Neuquén</option>
+          <option>Río Negro</option>
+          <option>Salta</option>
+          <option>San Juan</option>
+          <option>San Luis</option>
+          <option>Santa Cruz</option>
+          <option>Santa Fe</option>
+          <option>Santiago del Estero</option>
+          <option>Tierra del Fuego</option>
+          <option>Tucumán</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="cal-grid" id="cal-grid"></div>
+    <p class="cal-empty" id="cal-empty">Cargando carreras…</p>
+  </div>
+</section>
+
+<section id="pacers">
+  <div class="wrap">
+    <div class="section-label">03 — <span>Pacers</span></div>
+    <h2 class="section-title">Contratá a alguien que te lleve el ritmo</h2>
+    <p class="section-intro">Elegí carrera y ritmo objetivo, y encontrá corredores disponibles con su marca personal y precio por carrera.</p>
+
+    <div class="coming-soon" data-reveal>
+      <span class="eyebrow" style="margin-bottom:0;">PRÓXIMAMENTE</span>
+      <p>Estamos armando el sistema de matching entre corredores y pacers. Todavía no está disponible.</p>
+    </div>
+  </div>
+</section>
+
+<section id="entrenadores">
+  <div class="wrap">
+    <div class="section-label">04 — <span>Entrenadores</span></div>
+    <h2 class="section-title">Encontrá un entrenador para tu nivel</h2>
+    <p class="section-intro">Dónde entrenan, formación, para qué nivel de atleta apuntan y cómo contactarlos. Los entrenadores cargan sus datos acá abajo y aparecen al instante en esta lista.</p>
+
+    <div class="coach-grid" id="coach-grid"></div>
+    <p class="cal-empty" id="coach-empty">Cargando entrenadores…</p>
+
+    <div class="coach-form-wrap">
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLScIlPEdeMid-P5iExfllwNb_0P-jjRh6TNS3Pigp9Z_s5QR9g/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-solid">Soy entrenador, quiero cargar mis datos</a>
+      <p class="coach-form-note">Se abre en una pestaña nueva. Una vez que completes el formulario, tu ficha aparece automáticamente acá arriba.</p>
+    </div>
+  </div>
+</section>
+
+<section id="articulos">
+  <div class="wrap">
+    <div class="section-label">05 — <span>Artículos</span></div>
+    <h2 class="section-title">Escrito por corredores, para corredores</h2>
+    <p class="section-intro">Entrenadores, atletas federados y corredores de fondo comparten lo que aprendieron. Si tenés algo para contar, lo publicamos.</p>
+
+    <div class="cal-filters" data-reveal>
+      <div class="filter-group">
+        <span class="filter-label">Categoría</span>
+        <div class="mode-toggle" id="filter-art-categoria">
+          <span class="chip active" data-value="todas">Todas</span>
+          <span class="chip" data-value="entrenamiento">Entrenamiento y Técnica</span>
+          <span class="chip" data-value="nutricion">Nutrición y Salud</span>
+          <span class="chip" data-value="equipamiento">Equipamiento</span>
+          <span class="chip" data-value="comunidad">Comunidad e Historias</span>
+          <span class="chip" data-value="terreno">Pista/Ruta/Trail</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Mes</span>
+        <select id="filter-art-mes">
+          <option value="todas">Todos</option>
+          <option value="0">Enero</option>
+          <option value="1">Febrero</option>
+          <option value="2">Marzo</option>
+          <option value="3">Abril</option>
+          <option value="4">Mayo</option>
+          <option value="5">Junio</option>
+          <option value="6">Julio</option>
+          <option value="7">Agosto</option>
+          <option value="8">Septiembre</option>
+          <option value="9">Octubre</option>
+          <option value="10">Noviembre</option>
+          <option value="11">Diciembre</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="articles-grid" id="articles-grid"></div>
+    <p class="cal-empty" id="articles-empty">Cargando artículos…</p>
+
+    <div class="publish-cta" data-reveal>
+      <div>
+        <h3>¿Tenés un artículo para compartir?</h3>
+        <p>Mandanos tu nota y la publicamos con tu nombre y tu club.</p>
+      </div>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSeVzyYOt542OBS4-jHWj0M9DzDTQ8Hs9k-1RPFAHyKGibw5CA/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-primary">Publicar mi artículo</a>
+    </div>
+  </div>
+</section>
+
+<div class="article-modal-overlay hidden" id="article-modal-overlay" onclick="if(event.target===this) closeArticleModal()">
+  <div class="article-modal">
+    <button class="article-modal-close" onclick="closeArticleModal()">✕</button>
+    <div class="article-modal-banner" id="article-modal-banner"></div>
+    <div class="article-modal-body">
+      <span class="article-tag" id="article-modal-tag"></span>
+      <h3 id="article-modal-title"></h3>
+      <p class="article-modal-author" id="article-modal-author"></p>
+      <a href="#" target="_blank" rel="noopener" class="btn btn-primary" id="article-modal-link">Leer artículo completo</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:10px;">
+    <span>FONDO — todo para el corredor.</span>
+    <span>Prototipo · datos de ejemplo</span>
+  </div>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('[data-reveal]');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  const TIPS = [
+    {tag:'Entrenamiento', text:'La regla del 10%: no aumentes tu volumen semanal más de un 10% respecto a la semana anterior.'},
+    {tag:'Entrenamiento', text:'El 80% de tus kilómetros semanales deberían ser a ritmo suave, no rápido.'},
+    {tag:'Entrenamiento', text:'Un rodaje regenerativo después de una carrera fuerte ayuda a absorber el entrenamiento, no lo reemplaza.'},
+    {tag:'Entrenamiento', text:'Las series cortas y rápidas mejoran tu economía de carrera más que tu resistencia.'},
+    {tag:'Entrenamiento', text:'Si no podés mantener una conversación en tu rodaje, vas demasiado rápido.'},
+    {tag:'Entrenamiento', text:'Progresá el volumen antes que la intensidad — vale tanto si estás arrancando como si ya entrenás hace años.'},
+    {tag:'Entrenamiento', text:'Un ciclo de base aeróbica de 6-8 semanas antes de series específicas rinde mejor a largo plazo.'},
+    {tag:'Entrenamiento', text:'Alternar días de calidad con días suaves evita el sobreentrenamiento.'},
+    {tag:'Entrenamiento', text:'Las cuestas son series disfrazadas: mejoran fuerza y técnica sin el impacto de la velocidad en llano.'},
+    {tag:'Entrenamiento', text:'Tres sesiones de calidad por semana es un techo razonable para la mayoría de los amateurs.'},
+    {tag:'Entrenamiento', text:'El taper (reducir volumen) antes de una carrera importante puede mejorar tu marca sin perder forma.'},
+    {tag:'Entrenamiento', text:'Correr descalzo unos minutos en pasto de vez en cuando fortalece la musculatura del pie.'},
+    {tag:'Entrenamiento', text:'La cadencia ideal ronda los 170-180 pasos por minuto para la mayoría de los corredores.'},
+    {tag:'Entrenamiento', text:'Variá las superficies (tierra, pasto, asfalto) para repartir el impacto en distintas estructuras.'},
+    {tag:'Entrenamiento', text:'Un test de tiempo cada 4-6 semanas te dice si el entrenamiento está funcionando.'},
+    {tag:'Entrenamiento', text:'Las series largas (1000-2000m) construyen umbral; las cortas (200-400m) construyen velocidad.'},
+    {tag:'Entrenamiento', text:'Descansar un día completo por semana no te atrasa, te permite entrenar mejor los otros seis.'},
+    {tag:'Entrenamiento', text:'El fartlek (cambios de ritmo libres) mete intensidad sin la rigidez de la pista.'},
+    {tag:'Entrenamiento', text:'Correr en subida acorta el paso naturalmente — dejalo pasar, no fuerces la zancada.'},
+    {tag:'Entrenamiento', text:'La fuerza en el gimnasio (2 sesiones semanales) reduce el riesgo de lesión más que cualquier otra intervención.'},
+    {tag:'Entrenamiento', text:'Un mesociclo típico dura 3-4 semanas de carga y 1 de descarga.'},
+    {tag:'Entrenamiento', text:'Registrar tus entrenamientos te permite ver patrones que la memoria no retiene.'},
+    {tag:'Entrenamiento', text:'La técnica de carrera se entrena con ejercicios específicos (skipping, talones), no solo corriendo.'},
+    {tag:'Entrenamiento', text:'Si repetís la misma lesión, el problema suele estar en la progresión, no en la zapatilla.'},
+    {tag:'Entrenamiento', text:'Entrenar en grupo mejora la adherencia al plan más que cualquier truco de motivación individual.'},
+    {tag:'Nutrición', text:'En carreras de más de 90 minutos, apuntá a 30-60g de carbohidratos por hora desde el arranque.'},
+    {tag:'Nutrición', text:'La ventana de 30 minutos post-entreno es útil, pero lo que más importa es la ingesta total del día.'},
+    {tag:'Nutrición', text:'Hidratarte bien empieza el día anterior a la carrera, no en la largada.'},
+    {tag:'Nutrición', text:'El café antes de correr puede mejorar el rendimiento, pero probalo primero en entrenamientos.'},
+    {tag:'Nutrición', text:'No pruebes nada nuevo (gel, bebida, comida) el día de la carrera.'},
+    {tag:'Nutrición', text:'El hierro bajo es una causa común de fatiga en corredoras — un análisis de sangre lo aclara rápido.'},
+    {tag:'Nutrición', text:'Comé la noche anterior algo simple y conocido, alto en carbohidratos, bajo en fibra y grasa.'},
+    {tag:'Nutrición', text:'La sal que perdés transpirando también hay que reponerla en carreras largas, no solo el agua.'},
+    {tag:'Nutrición', text:'El desayuno pre-carrera va 2-3 horas antes para dar tiempo a digerir.'},
+    {tag:'Nutrición', text:'Los carbohidratos no son el enemigo: son el combustible principal para correr rápido.'},
+    {tag:'Nutrición', text:'Un déficit calórico agresivo mientras entrenás fuerte aumenta el riesgo de lesión y de bajo rendimiento.'},
+    {tag:'Nutrición', text:'La cafeína tarda unos 45 minutos en hacer efecto — calculá el timing antes de la largada.'},
+    {tag:'Nutrición', text:'La banana antes de correr es un clásico porque es fácil de digerir y aporta potasio.'},
+    {tag:'Nutrición', text:'Beber por sed suele alcanzar en carreras de menos de una hora, sin necesidad de un plan rígido.'},
+    {tag:'Nutrición', text:'Recuperar con proteína después de una sesión dura ayuda a reparar el músculo, no solo los carbohidratos.'},
+    {tag:'Recuperación', text:'El día después de una carrera fuerte, trote muy suave o descanso total — no repetir intensidad.'},
+    {tag:'Recuperación', text:'Dormir menos de 7 horas de forma sostenida afecta el rendimiento más que cualquier plan de entrenamiento.'},
+    {tag:'Recuperación', text:'Los masajes y el foam roller no reemplazan el descanso, lo complementan.'},
+    {tag:'Recuperación', text:'El dolor muscular (agujetas) es normal 24-48h después de un esfuerzo nuevo; el dolor articular no.'},
+    {tag:'Recuperación', text:'Una semana de descarga cada 3-4 semanas de carga previene el estancamiento y la lesión.'},
+    {tag:'Recuperación', text:'El sueño es cuando se produce la mayor parte de la hormona que repara el tejido muscular.'},
+    {tag:'Recuperación', text:'Escuchar a tu cuerpo no es debilidad: un día de más descanso a tiempo evita semanas de lesión.'},
+    {tag:'Recuperación', text:'La recuperación activa (caminar, nadar suave) mueve más sangre a los músculos que el reposo absoluto.'},
+    {tag:'Recuperación', text:'El estrés de la vida diaria también consume "batería" de recuperación, no solo el entrenamiento.'},
+    {tag:'Recuperación', text:'Si tu pulso en reposo está más alto de lo normal varios días seguidos, puede ser señal de fatiga acumulada.'},
+    {tag:'Recuperación', text:'Los baños de hielo tienen evidencia mixta — no son mágicos, aunque a algunos les ayuda la sensación.'},
+    {tag:'Recuperación', text:'Alternar zapatillas distintas entre entrenamientos reparte el estrés en diferentes puntos del pie y la pierna.'},
+    {tag:'Recuperación', text:'Estirar en frío no previene lesiones; hacerlo después de entrenar sí puede ayudar a la movilidad.'},
+    {tag:'Recuperación', text:'La fatiga mental cuenta como fatiga real — bajá la carga en semanas de mucho estrés fuera del running.'},
+    {tag:'Recuperación', text:'Un chequeo médico anual (incluyendo un electro) es una buena costumbre si entrenás en serio.'},
+    {tag:'Prevención', text:'Aumentar kilómetros y velocidad al mismo tiempo es la combinación más común detrás de las lesiones por sobreuso.'},
+    {tag:'Prevención', text:'El dolor que aparece siempre en el mismo punto y a la misma distancia merece atención.'},
+    {tag:'Prevención', text:'Las zapatillas pierden amortiguación entre los 600 y 800km, aunque se vean bien por fuera.'},
+    {tag:'Prevención', text:'Fortalecer los glúteos medios reduce el riesgo de dolor de rodilla en corredores.'},
+    {tag:'Prevención', text:'Un desequilibrio de fuerza entre una pierna y otra suele preceder a las lesiones unilaterales.'},
+    {tag:'Prevención', text:'Correr siempre por el mismo lado de una calle inclinada carga distinto cada pierna — alterná cuando puedas.'},
+    {tag:'Pista', text:'El carril 1 es el más corto y se reserva para series y trabajos específicos de velocidad.'},
+    {tag:'Prevención', text:'La flexibilidad de los gemelos y el sóleo influye directamente en la salud del tendón de Aquiles.'},
+    {tag:'Prevención', text:'Progresar el trabajo en cuestas o pista gradualmente evita sobrecargar tendones poco acostumbrados.'},
+    {tag:'Pista', text:'Una vuelta completa por el carril 1 son 400 metros exactos.'},
+    {tag:'Pista', text:'En una pista de atletismo siempre se corre en sentido contrario a las agujas del reloj.'},
+    {tag:'Prevención', text:'Volver de una lesión al mismo volumen que tenías antes es la forma más rápida de recaer.'},
+    {tag:'Prevención', text:'El calzado de calle también importa — muchas horas con mala pisada afectan a la pisada al correr.'},
+    {tag:'Pista', text:'Los carriles externos son más largos por vuelta — por eso las largadas de 200m y 400m son escalonadas.'},
+    {tag:'Prevención', text:'Si una molestia dura más de dos semanas sin mejorar, conviene que la vea un profesional.'},
+    {tag:'Mentalidad', text:'Los objetivos de proceso (cumplir el plan semanal) sostienen la motivación mejor que solo mirar la marca final.'},
+    {tag:'Mentalidad', text:'Los nervios antes de una carrera son energía disponible, no necesariamente una mala señal.'},
+    {tag:'Mentalidad', text:'Compararte con tu propio historial es más útil que compararte con el ritmo de otro corredor.'},
+    {tag:'Pista', text:'Las marcas blancas cada 100m sobre el carril 1 sirven para controlar tus parciales en un entrenamiento.'},
+    {tag:'Mentalidad', text:'Un mal entrenamiento aislado no arruina un plan de meses — la constancia importa más que la perfección.'},
+    {tag:'Mentalidad', text:'Dividir una carrera larga en tramos más cortos mentalmente hace más manejable el esfuerzo.'},
+    {tag:'Mentalidad', text:'La motivación va y viene; el hábito es lo que te lleva a entrenar en los días en que no tenés ganas.'},
+    {tag:'Mentalidad', text:'Correr acompañado en los rodajes largos hace más llevadero el volumen, sin exigir más al cuerpo.'},
+    {tag:'Mentalidad', text:'Fijar una frase o palabra clave para los momentos duros de una carrera ayuda a sostener el ritmo.'},
+    {tag:'Mentalidad', text:'Disfrutar el proceso de entrenar es lo que sostiene a un corredor en el tiempo, más que cualquier marca puntual.'},
+    {tag:'Día de carrera', text:'Llegá con margen de sobra — el estrés de último momento gasta energía que no tenés que gastar.'},
+    {tag:'Pista', text:'Si vas a trotar suave en la pista, usá los carriles externos y dejá el 1 libre para quien esté haciendo series.'},
+    {tag:'Día de carrera', text:'Revisá el pronóstico el día anterior y ajustá la vestimenta, no la sobrecargues por las dudas.'},
+    {tag:'Día de carrera', text:'Probá la ropa y las zapatillas de carrera en entrenamientos antes, nunca estrenes nada el día de la prueba.'},
+    {tag:'Día de carrera', text:'Un buen calentamiento para carreras cortas (5K-10K) incluye trote suave más algunos progresivos cortos.'},
+    {tag:'Día de carrera', text:'En carreras largas, el ritmo objetivo de los primeros kilómetros debería sentirse conservador, no cómodo.'},
+    {tag:'Día de carrera', text:'Anotar tus splits objetivo en el brazo o llevarlos en el reloj evita hacer cuentas bajo presión.'},
+    {tag:'Pista', text:'Antes de cruzar de carril en medio de una serie, mirá hacia atrás — puede venir alguien corriendo más rápido.'},
+    {tag:'Día de carrera', text:'Si el día sale mal, soltá el objetivo original y corré en función de cómo te sentís, no de lo planeado.'},
+    {tag:'Día de carrera', text:'Después de cruzar la meta, seguí caminando unos minutos antes de sentarte — ayuda a la circulación.'},
+    {tag:'Equipamiento', text:'Las zapatillas con placa de carbono rinden mejor en carrera o series clave — evitá usarlas en los rodajes fáciles.'},
+    {tag:'Equipamiento', text:'Un reloj GPS es una herramienta, no un jefe — no dejes que el pitido te dicte cómo te sentís.'},
+    {tag:'Equipamiento', text:'Las medias específicas para correr (sin costuras, de material técnico) reducen el riesgo de ampollas.'},
+    {tag:'Equipamiento', text:'Probar zapatillas nuevas en rodajes cortos antes de un entrenamiento clave evita sorpresas.'},
+    {tag:'Equipamiento', text:'La ropa técnica no es marketing vacío: la transpiración mal evacuada genera roces y frío en carreras largas.'},
+    {tag:'Equipamiento', text:'Un cinturón o chaleco de hidratación se vuelve necesario recién a partir de cierto volumen o clima extremo.'},
+    {tag:'Equipamiento', text:'Las plantillas genéricas rara vez resuelven un problema biomecánico complejo — para eso hace falta un profesional.'},
+    {tag:'Pista', text:'La zona de despegue de salto en largo y triple suele estar cerca de la recta — prestale atención si entrenás ahí.'},
+    {tag:'Equipamiento', text:'Un buen sostén deportivo es tan importante como las zapatillas para el rendimiento y el confort.'},
+    {tag:'Equipamiento', text:'La vaselina o el bodyglide en las zonas de roce es barato y evita bastante malestar en carreras largas.'}
+  ];
+
+  function pickDailyTips(n){
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - start) / 86400000);
+    const total = TIPS.length;
+    const step = Math.floor(total / n); // reparte las picks en tercios del banco para no repetir categoría
+    const picked = [];
+    for(let i=0;i<n;i++) picked.push(TIPS[(dayOfYear + i*step) % total]);
+    return picked;
+  }
+
+  function renderTips(){
+    const grid = document.getElementById('tips-grid');
+    if(!grid) return;
+    grid.innerHTML = pickDailyTips(3).map(t =>
+      `<div class="tip-card"><span class="tip-tag">${t.tag}</span><p>${t.text}</p></div>`
+    ).join('');
+  }
+  renderTips();
+
+  function fmtTime(totalSeconds){
+    totalSeconds = Math.round(totalSeconds);
+    const h = Math.floor(totalSeconds/3600);
+    const m = Math.floor((totalSeconds%3600)/60);
+    const s = totalSeconds%60;
+    const pad = n => String(n).padStart(2,'0');
+    return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+  }
+
+  const calcMode = { riegel: 'distancia', cameron: 'distancia' };
+
+  function setCalcMode(calc, mode){
+    calcMode[calc] = mode;
+    document.getElementById(`${calc}-mode-distancia-btn`).classList.toggle('active', mode === 'distancia');
+    document.getElementById(`${calc}-mode-tiempo-btn`).classList.toggle('active', mode === 'tiempo');
+    document.getElementById(`${calc}-distancia-group`).classList.toggle('hidden', mode !== 'distancia');
+    document.getElementById(`${calc}-tiempo-group`).classList.toggle('hidden', mode !== 'tiempo');
+  }
+
+  function calcRiegel(){
+    const d1 = parseFloat(document.getElementById('riegel-d1').value);
+    const h1 = parseFloat(document.getElementById('riegel-h1').value) || 0;
+    const m1 = parseFloat(document.getElementById('riegel-m1').value) || 0;
+    const s1 = parseFloat(document.getElementById('riegel-s1').value) || 0;
+    const t1 = h1*3600 + m1*60 + s1;
+    const resultEl = document.getElementById('riegel-result');
+    if(!t1 || t1 <= 0){
+      resultEl.textContent = 'Cargá un tiempo válido primero';
+      resultEl.classList.remove('filled');
+      return;
+    }
+    if(calcMode.riegel === 'distancia'){
+      const d2 = parseFloat(document.getElementById('riegel-d2').value);
+      const t2 = t1 * Math.pow(d2/d1, 1.06);
+      resultEl.textContent = `Tiempo estimado: ${fmtTime(t2)}`;
+    } else {
+      const h2 = parseFloat(document.getElementById('riegel-h2').value) || 0;
+      const m2 = parseFloat(document.getElementById('riegel-m2').value) || 0;
+      const s2 = parseFloat(document.getElementById('riegel-s2').value) || 0;
+      const t2 = h2*3600 + m2*60 + s2;
+      if(!t2 || t2 <= 0){
+        resultEl.textContent = 'Cargá un tiempo objetivo válido primero';
+        resultEl.classList.remove('filled');
+        return;
+      }
+      const d2 = d1 * Math.pow(t2/t1, 1/1.06);
+      resultEl.textContent = `Distancia estimada: ${d2.toFixed(2)} km`;
+    }
+    resultEl.classList.add('filled');
+  }
+
+  function cameronTime(t1, d1m, d2m){
+    const a = 13.49681, b = -0.000030363, c = 835.7114;
+    const f1 = a + b*d1m + c/d1m;
+    const f2 = a + b*d2m + c/d2m;
+    return t1 * (d2m/d1m) * (f1/f2);
+  }
+
+  function cameronDistanceFromTime(t1, d1m, t2Target){
+    let lo = 50, hi = 100000;
+    for(let i=0;i<80;i++){
+      const mid = (lo+hi)/2;
+      const t = cameronTime(t1, d1m, mid);
+      if(t < t2Target) lo = mid; else hi = mid;
+    }
+    return (lo+hi)/2;
+  }
+
+  function calcCameron(){
+    const d1 = parseFloat(document.getElementById('cameron-d1').value) * 1000;
+    const h1 = parseFloat(document.getElementById('cameron-h1').value) || 0;
+    const m1 = parseFloat(document.getElementById('cameron-m1').value) || 0;
+    const s1 = parseFloat(document.getElementById('cameron-s1').value) || 0;
+    const t1 = h1*3600 + m1*60 + s1;
+    const resultEl = document.getElementById('cameron-result');
+    if(!t1 || t1 <= 0){
+      resultEl.textContent = 'Cargá un tiempo válido primero';
+      resultEl.classList.remove('filled');
+      return;
+    }
+    if(calcMode.cameron === 'distancia'){
+      const d2 = parseFloat(document.getElementById('cameron-d2').value) * 1000;
+      const t2 = cameronTime(t1, d1, d2);
+      resultEl.textContent = `Tiempo estimado: ${fmtTime(t2)}`;
+    } else {
+      const h2 = parseFloat(document.getElementById('cameron-h2').value) || 0;
+      const m2 = parseFloat(document.getElementById('cameron-m2').value) || 0;
+      const s2 = parseFloat(document.getElementById('cameron-s2').value) || 0;
+      const t2 = h2*3600 + m2*60 + s2;
+      if(!t2 || t2 <= 0){
+        resultEl.textContent = 'Cargá un tiempo objetivo válido primero';
+        resultEl.classList.remove('filled');
+        return;
+      }
+      const d2m = cameronDistanceFromTime(t1, d1, t2);
+      resultEl.textContent = `Distancia estimada: ${(d2m/1000).toFixed(2)} km`;
+    }
+    resultEl.classList.add('filled');
+  }
+
+  function velocityFromVO2(vo2){
+    const a = 0.000104, b = 0.182258, c = -(4.60 + vo2);
+    return (-b + Math.sqrt(b*b - 4*a*c)) / (2*a); // metros por minuto
+  }
+
+  function paceStrFromVelocity(v){
+    const minPerKm = 1000 / v;
+    const min = Math.floor(minPerKm);
+    const sec = Math.round((minPerKm - min) * 60);
+    return `${min}:${String(sec).padStart(2,'0')} /km`;
+  }
+
+  function calcVDOT(){
+    const dist = parseFloat(document.getElementById('vdot-dist').value);
+    const h1 = parseFloat(document.getElementById('vdot-h1').value) || 0;
+    const m1 = parseFloat(document.getElementById('vdot-m1').value) || 0;
+    const s1 = parseFloat(document.getElementById('vdot-s1').value) || 0;
+    const tSec = h1*3600 + m1*60 + s1;
+    const resultEl = document.getElementById('vdot-result');
+    const pacesEl = document.getElementById('vdot-paces');
+    if(!dist || dist <= 0 || !tSec || tSec <= 0){
+      resultEl.textContent = 'Cargá distancia y tiempo válidos primero';
+      resultEl.classList.remove('filled');
+      pacesEl.innerHTML = '';
+      return;
+    }
+    const tMin = tSec / 60;
+    const v = dist / tMin; // metros por minuto
+    const vo2 = -4.60 + 0.182258*v + 0.000104*v*v;
+    const pct = 0.8 + 0.1894393*Math.exp(-0.012778*tMin) + 0.2989558*Math.exp(-0.1932605*tMin);
+    const vdot = vo2 / pct;
+    resultEl.textContent = `VDOT estimado: ${vdot.toFixed(1)}`;
+    resultEl.classList.add('filled');
+
+    const zones = [
+      {label:'Rodaje', pct:0.70},
+      {label:'Umbral', pct:0.88},
+      {label:'Intervalos (1000-1200m)', pct:0.975},
+      {label:'Series cortas (200-400m)', pct:1.10}
+    ];
+    let rows = '<div class="pace-table-title">Tus ritmos de entrenamiento</div>';
+    zones.forEach(z=>{
+      const vo2z = z.pct * vdot;
+      const vz = velocityFromVO2(vo2z);
+      rows += `<div class="pace-row"><span>${z.label}</span><span class="mono">${paceStrFromVelocity(vz)}</span></div>`;
+    });
+    pacesEl.innerHTML = rows;
+  }
+
+  let paceMode = 'ritmo';
+  function setPaceMode(mode){
+    paceMode = mode;
+    document.getElementById('pace-mode-ritmo-btn').classList.toggle('active', mode === 'ritmo');
+    document.getElementById('pace-mode-vel-btn').classList.toggle('active', mode === 'vel');
+    document.getElementById('pace-ritmo-group').classList.toggle('hidden', mode !== 'ritmo');
+    document.getElementById('pace-vel-group').classList.toggle('hidden', mode !== 'vel');
+  }
+
+  function calcPaceSpeed(){
+    const resultEl = document.getElementById('pace-result');
+    if(paceMode === 'ritmo'){
+      const m = parseFloat(document.getElementById('pace-m').value) || 0;
+      const s = parseFloat(document.getElementById('pace-s').value) || 0;
+      const paceMin = m + s/60;
+      if(paceMin <= 0){ resultEl.textContent = 'Cargá un ritmo válido primero'; resultEl.classList.remove('filled'); return; }
+      const kmh = 60 / paceMin;
+      resultEl.textContent = `Velocidad: ${kmh.toFixed(2)} km/h`;
+    } else {
+      const kmh = parseFloat(document.getElementById('pace-kmh').value);
+      if(!kmh || kmh <= 0){ resultEl.textContent = 'Cargá una velocidad válida primero'; resultEl.classList.remove('filled'); return; }
+      const paceMinTotal = 60 / kmh;
+      const min = Math.floor(paceMinTotal);
+      const sec = Math.round((paceMinTotal - min) * 60);
+      resultEl.textContent = `Ritmo: ${min}:${String(sec).padStart(2,'0')} /km`;
+    }
+    resultEl.classList.add('filled');
+  }
+
+  function calcTrack(){
+    const dist = parseFloat(document.getElementById('track-dist').value);
+    const h = parseFloat(document.getElementById('track-h').value) || 0;
+    const m = parseFloat(document.getElementById('track-m').value) || 0;
+    const s = parseFloat(document.getElementById('track-s').value) || 0;
+    const totalSec = h*3600 + m*60 + s;
+    const resultEl = document.getElementById('track-result');
+    const pacesEl = document.getElementById('track-paces');
+    if(!totalSec || totalSec <= 0){
+      resultEl.textContent = 'Cargá un tiempo válido primero';
+      resultEl.classList.remove('filled');
+      pacesEl.innerHTML = '';
+      return;
+    }
+    const per400 = totalSec * (400/dist);
+    const per200 = totalSec * (200/dist);
+    const per100 = totalSec * (100/dist);
+    const vueltas = (dist/400).toFixed(2);
+    resultEl.textContent = `${vueltas} vueltas en total`;
+    resultEl.classList.add('filled');
+    pacesEl.innerHTML = `
+      <div class="pace-table-title">Tus parciales</div>
+      <div class="pace-row"><span>Cada vuelta (400m)</span><span class="mono">${fmtTime(per400)}</span></div>
+      <div class="pace-row"><span>Cada 200m</span><span class="mono">${fmtTime(per200)}</span></div>
+      <div class="pace-row"><span>Cada 100m</span><span class="mono">${fmtTime(per100)}</span></div>
+    `;
+  }
+
+  function calcClima(){
+    const m = parseFloat(document.getElementById('clima-m').value) || 0;
+    const s = parseFloat(document.getElementById('clima-s').value) || 0;
+    const tempC = parseFloat(document.getElementById('clima-temp').value);
+    const humedad = parseFloat(document.getElementById('clima-hum').value);
+    const resultEl = document.getElementById('clima-result');
+    if(isNaN(tempC) || isNaN(humedad) || (m+s) <= 0){
+      resultEl.textContent = 'Completá ritmo, temperatura y humedad primero';
+      resultEl.classList.remove('filled');
+      return;
+    }
+    const ritmoSegundos = m*60 + s;
+    const dewPoint = tempC - ((100 - humedad) / 5);
+    const sumaTermica = tempC + dewPoint;
+    let ajustePorcentaje = 0;
+    if(sumaTermica <= 38) ajustePorcentaje = 0;
+    else if(sumaTermica <= 43) ajustePorcentaje = 0.008;
+    else if(sumaTermica <= 49) ajustePorcentaje = 0.022;
+    else if(sumaTermica <= 54) ajustePorcentaje = 0.047;
+    else if(sumaTermica <= 60) ajustePorcentaje = 0.075;
+    else ajustePorcentaje = 0.11;
+    const nuevoRitmoSegundos = ritmoSegundos * (1 + ajustePorcentaje);
+    resultEl.textContent = `Ritmo ajustado: ${fmtTime(nuevoRitmoSegundos)} /km · +${(ajustePorcentaje*100).toFixed(1)}%`;
+    resultEl.classList.add('filled');
+  }
+
+  const KARV_ZONES = [
+    {key:'z1', name:'Zona 1', lo:0.50, hi:0.60, desc:'Recuperación activa. Usala el día después de una carrera fuerte o en rodajes muy suaves. Se puede hablar sin ningún esfuerzo.'},
+    {key:'z2', name:'Zona 2', lo:0.60, hi:0.70, desc:'Base aeróbica. Es donde va la mayoría de tus rodajes semanales. Cómodo, se puede hablar en frases largas.'},
+    {key:'z3', name:'Zona 3', lo:0.70, hi:0.80, desc:'Tempo / ritmo moderado-fuerte. Rodajes progresivos o fartlek suave. Exigente pero sostenible, hablar cuesta.'},
+    {key:'z4', name:'Zona 4', lo:0.80, hi:0.90, desc:'Umbral anaeróbico. Series de umbral o tempo runs. Fuerte, solo se pueden decir frases cortas.'},
+    {key:'z5', name:'Zona 5', lo:0.90, hi:1.00, desc:'Capacidad anaeróbica / VO2 máx. Series cortas e intensas. Al límite, no se puede hablar.'}
+  ];
+
+  function calcKarvonen(){
+    const fcMax = parseFloat(document.getElementById('karv-max').value);
+    const fcRest = parseFloat(document.getElementById('karv-rest').value);
+    const zonesEl = document.getElementById('karv-zones');
+    if(!fcMax || !fcRest || fcMax <= fcRest){
+      zonesEl.innerHTML = '<p class="calc-note">Cargá una FC máxima y de reposo válidas primero.</p>';
+      return;
+    }
+    const hrr = fcMax - fcRest;
+    let html = '';
+    KARV_ZONES.forEach(z=>{
+      const lo = Math.round(fcRest + z.lo*hrr);
+      const hi = Math.round(fcRest + z.hi*hrr);
+      const barLo = (z.lo*100).toFixed(0);
+      const barHi = (z.hi*100).toFixed(0);
+      html += `
+        <div class="karv-zone karv-${z.key}">
+          <div class="karv-zone-head"><span class="karv-zone-name">${z.name}</span><span class="karv-zone-range">${lo}-${hi} ppm</span></div>
+          <div class="karv-bar-track"><div class="karv-bar-fill" style="margin-left:${barLo}%;width:${barHi-barLo}%;"></div></div>
+          <p class="karv-zone-desc">${z.desc}</p>
+        </div>
+      `;
+    });
+    zonesEl.innerHTML = html;
+  }
+
+  const cooperTable = {
+    female: {
+      '13-19':[25.0,30.9,34.9,38.9,41.9],
+      '20-29':[23.6,28.9,32.9,36.9,41.0],
+      '30-39':[22.8,26.9,31.4,35.6,40.0],
+      '40-49':[21.0,24.4,28.9,32.8,36.9],
+      '50-59':[20.2,22.7,26.9,31.4,35.7],
+      '60+':[17.5,20.1,24.4,30.2,31.4]
+    },
+    male: {
+      '13-19':[35.0,38.3,45.1,50.9,55.9],
+      '20-29':[33.0,36.4,42.4,46.4,52.4],
+      '30-39':[31.5,35.4,40.9,44.9,49.4],
+      '40-49':[30.2,33.5,38.9,43.7,48.0],
+      '50-59':[26.1,30.9,35.7,40.9,45.3],
+      '60+':[20.5,26.0,32.2,36.4,44.2]
+    }
+  };
+
+  function classifyCooper(vo2max, sex, age){
+    const t = cooperTable[sex][age];
+    if(vo2max < t[0]) return 'Muy malo';
+    if(vo2max <= t[1]) return 'Malo';
+    if(vo2max <= t[2]) return 'Regular';
+    if(vo2max <= t[3]) return 'Bueno';
+    if(vo2max <= t[4]) return 'Excelente';
+    return 'Superior';
+  }
+
+  function calcCooper(){
+    const dist = parseFloat(document.getElementById('cooper-dist').value);
+    const age = document.getElementById('cooper-age').value;
+    const sex = document.getElementById('cooper-sex').value;
+    const resultEl = document.getElementById('cooper-result');
+    if(!dist || dist <= 0){
+      resultEl.textContent = 'Cargá una distancia válida primero';
+      resultEl.classList.remove('filled');
+      return;
+    }
+    const vo2max = (dist - 504.9) / 44.73;
+    const nivel = classifyCooper(vo2max, sex, age);
+    resultEl.textContent = `VO2 máx estimado: ${vo2max.toFixed(1)} ml/kg/min · ${nivel}`;
+    resultEl.classList.add('filled');
+  }
+
+  // --- Calendario de carreras: carga automática desde el Google Sheet publicado ---
+  const RACES_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTMwhwjfw8NrM03AO1DFaR2GNNFPkaqTY2qI5n6u9jiri59NAA6LpSaTOszvUqb6nEH4Ti9KydJtdMD/pub?gid=1629829610&single=true&output=csv';
+  const MESES = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+  let races = [];
+
+  function parseFechaFlexible(str){
+    if(!str) return null;
+    str = str.trim();
+    let m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if(m) return {y:+m[1], mo:+m[2], d:+m[3]};
+    m = str.match(/^(\d{1,4})\/(\d{1,2})\/(\d{1,4})$/);
+    if(m){
+      const a = +m[1], b = +m[2], c = +m[3];
+      if(m[1].length === 4) return {y:a, mo:b, d:c}; // YYYY/MM/DD
+      if(m[3].length === 4){
+        if(a > 12) return {y:c, mo:b, d:a}; // DD/MM/YYYY (a no puede ser mes)
+        if(b > 12) return {y:c, mo:a, d:b}; // MM/DD/YYYY (b no puede ser mes)
+        return {y:c, mo:b, d:a}; // ambiguo -> asumimos DD/MM/YYYY (formato argentino)
+      }
+    }
+    return null;
+  }
+
+  function parseHoraFlexible(str){
+    if(!str) return {h:0, mi:0, s:0};
+    str = str.trim();
+    const ampmMatch = str.match(/(am|pm)/i);
+    const ampm = ampmMatch ? ampmMatch[1].toLowerCase() : null;
+    const clean = str.replace(/(am|pm)/i, '').trim();
+    const parts = clean.split(':').map(p => parseInt(p, 10));
+    let h = parts[0] || 0, mi = parts[1] || 0, s = parts[2] || 0;
+    if(ampm === 'pm' && h < 12) h += 12;
+    if(ampm === 'am' && h === 12) h = 0;
+    return {h, mi, s};
+  }
+
+  function parseRaceDate(dateStr, timeStr){
+    const dp = parseFechaFlexible(dateStr);
+    if(!dp) return null;
+    const tp = parseHoraFlexible(timeStr);
+    const d = new Date(dp.y, dp.mo - 1, dp.d, tp.h, tp.mi, tp.s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  function normalizeTipo(raw){
+    const t = (raw || '').toLowerCase();
+    if(t.includes('calle') || t.includes('asfalto')) return {key:'calle', label:'Calle'};
+    if(t.includes('trail') || t.includes('monta')) return {key:'trail', label:'Trail'};
+    if(t.includes('pista') || t.includes('atletismo')) return {key:'pista', label:'Pista'};
+    if(t.includes('cross')) return {key:'cross', label:'Cross Country'};
+    return {key:'otro', label: raw || 'Otro'};
+  }
+
+  function parseDistances(raw){
+    return (raw || '').split(',').map(s => s.trim()).filter(Boolean);
+  }
+
+  function distanceBucket(tok){
+    const num = parseFloat(tok.replace(',', '.'));
+    if(isNaN(num)) return null;
+    if(Math.abs(num - 5) <= 0.6) return '5k';
+    if(Math.abs(num - 10) <= 0.9) return '10k';
+    if(Math.abs(num - 21) <= 1.2) return '21k';
+    if(Math.abs(num - 42) <= 1.2) return '42k';
+    return null;
+  }
+
+  function toGCalDateStr(d){
+    const pad = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+  }
+
+  function gcalLink(r){
+    if(!r.date) return '#';
+    const end = new Date(r.date.getTime() + 2*60*60*1000);
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: r.nombre || 'Carrera',
+      dates: `${toGCalDateStr(r.date)}/${toGCalDateStr(end)}`,
+      details: `Distancias: ${r.distanciasRaw || ''}. Más info: ${r.link || ''}`,
+      location: r.ubicacion || ''
+    });
+    return `https://calendar.google.com/calendar/render?${params.toString()}`;
+  }
+
+  function getSelectedChipValue(groupId){
+    const active = document.querySelector(`#${groupId} .chip.active`);
+    return active ? active.dataset.value : 'todas';
+  }
+
+  function buildRaceCard(r){
+    const card = document.createElement('div');
+    card.className = 'cal-card';
+    const dateBadge = r.date ? `${String(r.date.getDate()).padStart(2,'0')} ${MESES[r.date.getMonth()]}` : 'Sin fecha';
+    const timeStr = r.date ? `${String(r.date.getHours()).padStart(2,'0')}:${String(r.date.getMinutes()).padStart(2,'0')} hs` : '';
+    card.innerHTML = `
+      <div class="cal-date">${dateBadge}${timeStr ? ' · ' + timeStr : ''}</div>
+      <h3>${r.nombre || ''}</h3>
+      <p class="cal-meta">${r.ubicacion || ''}</p>
+      <span class="cal-badge">${r.tipoLabel}</span>
+      <div class="cal-distances">${r.distancias.map(d => `<span>${d}</span>`).join('')}</div>
+      <div class="cal-actions">
+        <a href="${r.link || '#'}" target="_blank" rel="noopener" class="cal-btn cal-btn-primary">Más información</a>
+        <a href="${gcalLink(r)}" target="_blank" rel="noopener" class="cal-btn cal-btn-ghost">+ Google Calendar</a>
+      </div>
+    `;
+    return card;
+  }
+
+  function normStr(s){
+    return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
+
+  function applyFilters(){
+    if(!races.length) return;
+    const distFilter = getSelectedChipValue('filter-distancia');
+    const tipoFilter = getSelectedChipValue('filter-tipo');
+    const mesFilter = document.getElementById('filter-mes').value;
+    const provFilter = document.getElementById('filter-provincia').value;
+    const provFilterNorm = normStr(provFilter);
+
+    let filtered = races.filter(r=>{
+      if(distFilter !== 'todas' && !r.distanceBuckets.includes(distFilter)) return false;
+      if(tipoFilter !== 'todas' && r.tipoKey !== tipoFilter) return false;
+      if(mesFilter !== 'todas'){
+        if(!r.date || r.date.getMonth() !== parseInt(mesFilter, 10)) return false;
+      }
+      if(provFilter !== 'todas'){
+        const provNorm = normStr(r.provincia);
+        const match = provNorm.includes(provFilterNorm) || provFilterNorm.includes(provNorm)
+          || (provFilter === 'Ciudad Autónoma de Buenos Aires' && (provNorm.includes('caba') || provNorm.includes('capital federal')));
+        if(!match) return false;
+      }
+      return true;
+    });
+    filtered.sort((a,b)=>{
+      if(!a.date && !b.date) return 0;
+      if(!a.date) return 1;
+      if(!b.date) return -1;
+      return a.date - b.date;
+    });
+
+    const grid = document.getElementById('cal-grid');
+    const emptyEl = document.getElementById('cal-empty');
+    grid.innerHTML = '';
+    if(filtered.length === 0){
+      emptyEl.textContent = 'No hay carreras que coincidan con esos filtros.';
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+    filtered.forEach(r => grid.appendChild(buildRaceCard(r)));
+  }
+
+  document.querySelectorAll('#filter-distancia .chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      document.querySelectorAll('#filter-distancia .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      applyFilters();
+    });
+  });
+  document.querySelectorAll('#filter-tipo .chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      document.querySelectorAll('#filter-tipo .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      applyFilters();
+    });
+  });
+  const provSelectEl = document.getElementById('filter-provincia');
+  if(provSelectEl) provSelectEl.addEventListener('change', applyFilters);
+  const mesSelectEl = document.getElementById('filter-mes');
+  if(mesSelectEl) mesSelectEl.addEventListener('change', applyFilters);
+
+  async function loadRaces(){
+    const emptyEl = document.getElementById('cal-empty');
+    try{
+      const res = await fetch(RACES_SHEET_CSV);
+      if(!res.ok){
+        emptyEl.textContent = 'No pudimos cargar el calendario ahora. Probá recargar la página.';
+        return;
+      }
+      const text = await res.text();
+      const rows = parseCSV(text).filter(r => r.length > 1 && r.some(c => c.trim() !== ''));
+      if(rows.length < 2){
+        emptyEl.textContent = 'Todavía no hay carreras cargadas. ¡Sumá la primera con el botón de arriba!';
+        return;
+      }
+
+      races = rows.slice(1).map(cols=>{
+        const [, nombre, fecha, hora, ubicacion, tipoRaw, distanciasRaw, link] = cols;
+        const date = parseRaceDate(fecha, hora);
+        const tipo = normalizeTipo(tipoRaw);
+        const distancias = parseDistances(distanciasRaw);
+        const distanceBuckets = [...new Set(distancias.map(distanceBucket).filter(Boolean))];
+        const provincia = (ubicacion || '').split(',').pop().trim();
+        return { nombre, date, ubicacion, tipoKey: tipo.key, tipoLabel: tipo.label, distancias, distanceBuckets, link, provincia, distanciasRaw };
+      });
+
+      applyFilters();
+    } catch(err){
+      emptyEl.textContent = 'No pudimos cargar el calendario ahora. Probá recargar la página.';
+    }
+  }
+  loadRaces();
+
+  // --- Entrenadores: carga automática desde el Google Sheet publicado ---
+  // --- Artículos: carga automática desde el Google Sheet publicado ---
+  const ARTICLES_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8XI3o2YY6kjGz38PPsh2ZQYjQtDw16llAX9rdCGzNEYEHM5g9SRp2UubSDyOxNXkvSsq0I6IDGG8h/pub?gid=926038656&single=true&output=csv';
+  let articles = [];
+  let articleFilterCategoria = 'todas';
+
+  function normalizeCategoria(raw){
+    const t = normStr(raw);
+    if(t.includes('entrenamiento') || t.includes('tecnica')) return {key:'entrenamiento', label:'Entrenamiento y Técnica'};
+    if(t.includes('nutricion') || t.includes('salud')) return {key:'nutricion', label:'Nutrición y Salud'};
+    if(t.includes('equipamiento')) return {key:'equipamiento', label:'Equipamiento'};
+    if(t.includes('comunidad') || t.includes('historia')) return {key:'comunidad', label:'Comunidad e Historias'};
+    if(t.includes('pista') || t.includes('ruta') || t.includes('trail')) return {key:'terreno', label:'Pista/Ruta/Trail'};
+    return {key:'otro', label: raw || 'Otro'};
+  }
+
+  function resolveImageUrl(raw){
+    if(!raw) return '';
+    raw = raw.trim();
+    const driveMatch = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=|thumbnail\?id=)([a-zA-Z0-9_-]+)/);
+    if(driveMatch) return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1000`;
+    return raw;
+  }
+
+  function normalizeLink(raw){
+    if(!raw) return null;
+    raw = raw.trim();
+    if(/^https?:\/\//i.test(raw)) return raw;
+    if(raw.startsWith('@')) return `https://instagram.com/${raw.slice(1)}`;
+    if(/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(raw)) return `https://${raw}`;
+    return null; // no se pudo interpretar como link válido
+  }
+
+  function parseTimestamp(ts){
+    if(!ts) return null;
+    const parts = ts.trim().split(' ');
+    return parseRaceDate(parts[0], parts.slice(1).join(' '));
+  }
+
+  function buildArticleCard(a, i){
+    const card = document.createElement('div');
+    card.className = 'article-card';
+    card.onclick = () => openArticleModal(i);
+    const dateLabel = a.fecha ? `${String(a.fecha.getDate()).padStart(2,'0')} ${MESES[a.fecha.getMonth()]}` : '';
+    card.innerHTML = `
+      ${a.foto ? `<img class="article-cover" src="${a.foto}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+      <div class="article-card-body">
+        <span class="article-tag">${a.categoriaLabel}</span>
+        <h3>${a.titulo || ''}</h3>
+        <p class="article-meta">Por ${a.nombre || 'Anónimo'}${dateLabel ? ' · ' + dateLabel : ''}</p>
+      </div>
+    `;
+    return card;
+  }
+
+  function openArticleModal(i){
+    const a = articles[i];
+    document.getElementById('article-modal-tag').textContent = a.categoriaLabel;
+    document.getElementById('article-modal-title').textContent = a.titulo || '';
+    document.getElementById('article-modal-author').textContent = `Por ${a.nombre || 'Anónimo'}${a.contacto ? ' · ' + a.contacto : ''}`;
+    document.getElementById('article-modal-link').href = a.link || '#';
+    document.getElementById('article-modal-banner').innerHTML = a.foto ? `<img src="${a.foto}" alt="" onerror="this.parentElement.style.display='none'">` : '';
+    document.getElementById('article-modal-overlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeArticleModal(){
+    document.getElementById('article-modal-overlay').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function applyArticleFilters(){
+    if(!articles.length) return;
+    const mesFilter = document.getElementById('filter-art-mes').value;
+    let filtered = articles.filter(a=>{
+      if(articleFilterCategoria !== 'todas' && a.categoriaKey !== articleFilterCategoria) return false;
+      if(mesFilter !== 'todas'){
+        if(!a.fecha || a.fecha.getMonth() !== parseInt(mesFilter, 10)) return false;
+      }
+      return true;
+    });
+    filtered.sort((a,b)=>{
+      if(!a.fecha && !b.fecha) return 0;
+      if(!a.fecha) return 1;
+      if(!b.fecha) return -1;
+      return b.fecha - a.fecha; // más recientes primero
+    });
+
+    const grid = document.getElementById('articles-grid');
+    const emptyEl = document.getElementById('articles-empty');
+    grid.innerHTML = '';
+    if(filtered.length === 0){
+      emptyEl.textContent = 'No hay artículos que coincidan con esos filtros.';
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+    filtered.forEach(a=>{
+      const realIndex = articles.indexOf(a);
+      grid.appendChild(buildArticleCard(a, realIndex));
+    });
+  }
+
+  document.querySelectorAll('#filter-art-categoria .chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      document.querySelectorAll('#filter-art-categoria .chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      articleFilterCategoria = chip.dataset.value;
+      applyArticleFilters();
+    });
+  });
+  const artMesSelectEl = document.getElementById('filter-art-mes');
+  if(artMesSelectEl) artMesSelectEl.addEventListener('change', applyArticleFilters);
+
+  function findColIndex(headers, keywords){
+    const normHeaders = headers.map(h => normStr(h));
+    for(let i=0;i<normHeaders.length;i++){
+      if(keywords.some(k => normHeaders[i].includes(k))) return i;
+    }
+    return -1;
+  }
+
+  async function loadArticles(){
+    const emptyEl = document.getElementById('articles-empty');
+    try{
+      const res = await fetch(ARTICLES_SHEET_CSV);
+      if(!res.ok){
+        emptyEl.textContent = 'No pudimos cargar los artículos ahora. Probá recargar la página.';
+        return;
+      }
+      const text = await res.text();
+      const rows = parseCSV(text).filter(r => r.length > 1 && r.some(c => c.trim() !== ''));
+      if(rows.length < 2){
+        emptyEl.textContent = 'Todavía no hay artículos publicados. ¡Sé el primero con el botón de abajo!';
+        return;
+      }
+
+      const headers = rows[0];
+      const col = {
+        nombre: findColIndex(headers, ['nombre']),
+        contacto: findColIndex(headers, ['mail', 'red']),
+        titulo: findColIndex(headers, ['titulo']),
+        link: findColIndex(headers, ['link', 'enlace']),
+        categoria: findColIndex(headers, ['categoria']),
+        foto: findColIndex(headers, ['foto', 'portada', 'imagen'])
+      };
+
+      articles = rows.slice(1).map(cols=>{
+        const marca = cols[0];
+        const cat = normalizeCategoria(col.categoria >= 0 ? cols[col.categoria] : '');
+        return {
+          nombre: col.nombre >= 0 ? cols[col.nombre] : '',
+          contacto: col.contacto >= 0 ? cols[col.contacto] : '',
+          titulo: col.titulo >= 0 ? cols[col.titulo] : '',
+          link: normalizeLink(col.link >= 0 ? cols[col.link] : ''),
+          categoriaKey: cat.key, categoriaLabel: cat.label,
+          foto: resolveImageUrl(col.foto >= 0 ? cols[col.foto] : ''),
+          fecha: parseTimestamp(marca)
+        };
+      }).filter(a => a.link); // si el link no se pudo interpretar, no se publica
+
+      if(articles.length === 0){
+        emptyEl.textContent = 'Todavía no hay artículos publicados con un link válido.';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+      applyArticleFilters();
+    } catch(err){
+      emptyEl.textContent = 'No pudimos cargar los artículos ahora. Probá recargar la página.';
+    }
+  }
+  loadArticles();
+
+  // --- Entrenadores: carga automática desde el Google Sheet publicado ---
+  const COACH_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQcjkEjuolFXV26PkjyhFuFaxoOSSqsGCwWQeuBxwuwAuV4nq9JcTGjTkNPL-DHM9q9ppSnGi-chHoK/pub?output=csv';
+
+  function parseCSV(text){
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for(let i=0;i<text.length;i++){
+      const c = text[i];
+      if(inQuotes){
+        if(c === '"'){
+          if(text[i+1] === '"'){ field += '"'; i++; } else { inQuotes = false; }
+        } else field += c;
+      } else {
+        if(c === '"') inQuotes = true;
+        else if(c === ','){ row.push(field); field = ''; }
+        else if(c === '\n'){ row.push(field); rows.push(row); row = []; field = ''; }
+        else if(c === '\r'){ /* skip */ }
+        else field += c;
+      }
+    }
+    if(field.length || row.length){ row.push(field); rows.push(row); }
+    return rows;
+  }
+
+  function waLink(raw){
+    const digits = (raw || '').replace(/\D/g, '');
+    return `https://wa.me/${digits}`;
+  }
+
+  function igLink(raw){
+    if(!raw) return null;
+    raw = raw.trim();
+    if(raw.startsWith('http')) return raw;
+    return `https://instagram.com/${raw.replace('@','')}`;
+  }
+
+  function slugify(str){
+    return (str || '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  }
+
+  function renderCoachCard(cols){
+    const [, nombre, zona, dias, horarios, formacion, nivel, especialidad, instagram, email, whatsapp, bio] = cols;
+    const card = document.createElement('div');
+    card.className = 'coach-card';
+    card.id = `entrenador-${slugify(nombre)}`;
+    card.innerHTML = `
+      <h3>${nombre || ''}</h3>
+      <p class="coach-meta"><strong>Dónde entrena:</strong> ${zona || ''}</p>
+      <p class="coach-meta"><strong>Días y horarios:</strong> ${[dias, horarios].filter(Boolean).join(' · ')}</p>
+      <p class="coach-meta"><strong>Formación:</strong> ${formacion || ''}</p>
+      <p class="coach-meta"><strong>Nivel:</strong> ${nivel || ''}</p>
+      <p class="coach-meta"><strong>Especialidad:</strong> ${especialidad || ''}</p>
+      ${bio ? `<p class="coach-bio">${bio}</p>` : ''}
+      <div class="coach-contact">
+        ${email ? `<a href="mailto:${email}">Email</a>` : ''}
+        ${whatsapp ? `<a href="${waLink(whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+        ${instagram ? `<a href="${igLink(instagram)}" target="_blank" rel="noopener">Instagram</a>` : ''}
+      </div>
+    `;
+    return card;
+  }
+
+  function handleCoachDeepLink(){
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get('entrenador');
+    if(!target) return;
+    const el = document.getElementById(`entrenador-${slugify(target)}`);
+    if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.classList.add('coach-highlight');
+    setTimeout(()=> el.classList.remove('coach-highlight'), 3000);
+  }
+
+  async function loadCoaches(){
+    const emptyEl = document.getElementById('coach-empty');
+    try{
+      const res = await fetch(COACH_SHEET_CSV);
+      if(!res.ok){
+        emptyEl.textContent = 'No pudimos cargar los entrenadores ahora. Probá recargar la página.';
+        return;
+      }
+      const text = await res.text();
+      const rows = parseCSV(text).filter(r => r.length > 1 && r.some(c => c.trim() !== ''));
+      if(rows.length < 2){
+        emptyEl.textContent = 'Todavía no hay entrenadores cargados. ¡Sé el primero con el botón de abajo!';
+        return;
+      }
+      const grid = document.getElementById('coach-grid');
+      grid.innerHTML = '';
+      for(let i=1;i<rows.length;i++){
+        grid.appendChild(renderCoachCard(rows[i]));
+      }
+      emptyEl.classList.add('hidden');
+      handleCoachDeepLink();
+    } catch(err){
+      emptyEl.textContent = 'No pudimos cargar los entrenadores ahora. Probá recargar la página.';
+    }
+  }
+  loadCoaches();
+</script>
+
+</body>
+</html>
