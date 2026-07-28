@@ -979,6 +979,15 @@
         </div>
         <p class="filter-hint">Mañana: 5 a 12hs · Tarde: 12 a 19hs · Noche: 19 a 5hs</p>
       </div>
+      <div class="filter-group">
+        <span class="filter-label">Especialidad</span>
+        <div class="mode-toggle" id="filter-coach-especialidad">
+          <span class="chip active" data-value="todas">Todas</span>
+          <span class="chip" data-value="calle">Calle</span>
+          <span class="chip" data-value="trail">Trail</span>
+          <span class="chip" data-value="pista">Pista</span>
+        </div>
+      </div>
     </div>
 
     <div class="coach-grid" id="coach-grid"></div>
@@ -1978,10 +1987,26 @@
     'san martin de los andes':'Neuquén','villa la angostura':'Neuquén','zapala':'Neuquén'
   };
 
+  function parseEspecialidad(raw){
+    const t = normStr(raw);
+    const keys = new Set();
+    if(!t) return keys;
+    if(t.includes('todo') || t.includes('cualquier')){
+      return new Set(['calle', 'trail', 'pista']);
+    }
+    if(t.includes('calle') || t.includes('asfalto') || t.includes('ruta')) keys.add('calle');
+    if(t.includes('trail') || t.includes('monta')) keys.add('trail');
+    if(t.includes('pista') || t.includes('atletismo')) keys.add('pista');
+    return keys;
+  }
+
   function parseNivel(raw){
     const t = normStr(raw);
     const keys = new Set();
     if(!t) return keys;
+    if(t.includes('todo') || t.includes('cualquier nivel') || t.includes('todo publico') || t.includes('todo el publico')){
+      return new Set(['iniciacion', 'amateur', 'avanzado', 'federado', 'alto_rendimiento']);
+    }
     if(t.includes('inicia')) keys.add('iniciacion');
     if(t.includes('amateur')) keys.add('amateur');
     if(t.includes('avanzad')) keys.add('avanzado');
@@ -2035,12 +2060,12 @@
     const t = normStr(zonaText);
     if(!t) return {provincia: null, isAMBA: false};
 
-    // CABA (ciudad o barrios porteños) -> es AMBA, y su "provincia" es CABA, no Buenos Aires
+    // CABA (ciudad o barrios porteños) -> es su propia categoría, NO cuenta como AMBA
     if(t.includes('caba') || t.includes('capital federal') || t.includes('ciudad autonoma')){
-      return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA: true};
+      return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA: false};
     }
     for(const barrio of CABA_BARRIOS){
-      if(t.includes(barrio)) return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA: true};
+      if(t.includes(barrio)) return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA: false};
     }
     // Partido del conurbano -> es AMBA, pero NO cuenta como "Buenos Aires" provincia
     // (para no repetir el mismo entrenador en los dos filtros)
@@ -2100,6 +2125,7 @@
   const coachFilterNivel = new Set(['todas']);
   const coachFilterDia = new Set(['todas']);
   const coachFilterHorario = new Set(['todas']);
+  const coachFilterEspecialidad = new Set(['todas']);
 
   function applyCoachFilters(){
     if(!coaches.length) return;
@@ -2113,6 +2139,7 @@
       if(!coachFilterNivel.has('todas') && ![...c.nivelKeys].some(k => coachFilterNivel.has(k))) return false;
       if(!coachFilterDia.has('todas') && ![...c.diasSet].some(d => coachFilterDia.has(d))) return false;
       if(!coachFilterHorario.has('todas') && ![...c.horarioSet].some(h => coachFilterHorario.has(h))) return false;
+      if(!coachFilterEspecialidad.has('todas') && ![...c.especialidadKeys].some(e => coachFilterEspecialidad.has(e))) return false;
       return true;
     });
 
@@ -2169,6 +2196,7 @@
   setupMultiToggleGroup('filter-coach-nivel', coachFilterNivel);
   setupMultiToggleGroup('filter-coach-dia', coachFilterDia);
   setupMultiToggleGroup('filter-coach-horario', coachFilterHorario);
+  setupMultiToggleGroup('filter-coach-especialidad', coachFilterEspecialidad);
 
   function handleCoachDeepLink(){
     const params = new URLSearchParams(window.location.search);
@@ -2196,14 +2224,24 @@
         return;
       }
       coaches = rows.slice(1).map(cols=>{
-        const [, nombre, zona, dias, horarios, formacion, nivel, especialidad, instagram, email, whatsapp, bio] = cols;
+        const [marca, nombre, zona, dias, horarios, formacion, nivel, especialidad, instagram, email, whatsapp, bio] = cols;
         const inf = inferProvincia(zona);
         return {
           nombre, zona, dias, horarios, formacion, nivel, especialidad, instagram, email, whatsapp, bio,
           provincia: inf.provincia, isAMBA: inf.isAMBA, slug: slugify(nombre),
-          nivelKeys: parseNivel(nivel), diasSet: parseDias(dias), horarioSet: parseHorarioBuckets(horarios)
+          nivelKeys: parseNivel(nivel), diasSet: parseDias(dias), horarioSet: parseHorarioBuckets(horarios),
+          especialidadKeys: parseEspecialidad(especialidad),
+          fecha: parseTimestamp(marca)
         };
       });
+      // Si alguien cargó el mismo nombre más de una vez, nos quedamos solo con la carga más reciente
+      const porNombre = new Map();
+      coaches.forEach(c=>{
+        const key = c.slug;
+        const previo = porNombre.get(key);
+        if(!previo || (c.fecha && (!previo.fecha || c.fecha > previo.fecha))) porNombre.set(key, c);
+      });
+      coaches = [...porNombre.values()];
       populateZonaSubfilter('todas');
       applyCoachFilters();
       handleCoachDeepLink();
