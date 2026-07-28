@@ -46,12 +46,17 @@
   }
   nav .wrap{
     display:flex;align-items:center;justify-content:space-between;
-    height:64px;
+    height:72px;
   }
+  .logo-block{display:flex;flex-direction:column;justify-content:center;line-height:1.1;}
   .logo{
     font-family:'Oswald',sans-serif;
     font-size:22px;font-weight:700;
     letter-spacing:0.06em;
+  }
+  .logo-slogan{
+    font-family:'Inter',sans-serif;font-size:10px;color:var(--text-dim);
+    letter-spacing:0.03em;margin-top:2px;
   }
   .logo span{color:var(--orange);}
   .navlinks{display:flex;gap:32px;font-size:14px;color:var(--text-dim);}
@@ -427,7 +432,10 @@
 
 <nav>
   <div class="wrap">
-    <div class="logo">FON<span>DO</span></div>
+    <div class="logo-block">
+      <div class="logo">FON<span>DO</span></div>
+      <div class="logo-slogan">De un atleta, para los atletas</div>
+    </div>
     <div class="navlinks">
       <a href="#calculadoras">Calculadoras</a>
       <a href="#calendario">Calendario</a>
@@ -898,6 +906,79 @@
     <h2 class="section-title">Encontrá un entrenador para tu nivel</h2>
     <p class="section-intro">Dónde entrenan, formación, para qué nivel de atleta apuntan y cómo contactarlos. Los entrenadores cargan sus datos acá abajo y aparecen al instante en esta lista.</p>
 
+    <div class="cal-filters" data-reveal>
+      <div class="filter-group">
+        <span class="filter-label">Provincia</span>
+        <select id="coach-filter-provincia">
+          <option value="todas">Todas</option>
+          <option value="AMBA">AMBA</option>
+          <option>Buenos Aires</option>
+          <option>Catamarca</option>
+          <option>Chaco</option>
+          <option>Chubut</option>
+          <option>Ciudad Autónoma de Buenos Aires</option>
+          <option>Córdoba</option>
+          <option>Corrientes</option>
+          <option>Entre Ríos</option>
+          <option>Formosa</option>
+          <option>Jujuy</option>
+          <option>La Pampa</option>
+          <option>La Rioja</option>
+          <option>Mendoza</option>
+          <option>Misiones</option>
+          <option>Neuquén</option>
+          <option>Río Negro</option>
+          <option>Salta</option>
+          <option>San Juan</option>
+          <option>San Luis</option>
+          <option>Santa Cruz</option>
+          <option>Santa Fe</option>
+          <option>Santiago del Estero</option>
+          <option>Tierra del Fuego</option>
+          <option>Tucumán</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Zona</span>
+        <select id="coach-filter-zona">
+          <option value="todas">Todas</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Nivel</span>
+        <div class="mode-toggle" id="filter-coach-nivel">
+          <span class="chip active" data-value="todas">Todos</span>
+          <span class="chip" data-value="iniciacion">Iniciación</span>
+          <span class="chip" data-value="amateur">Amateur</span>
+          <span class="chip" data-value="avanzado">Avanzado</span>
+          <span class="chip" data-value="federado">Federado</span>
+          <span class="chip" data-value="alto_rendimiento">Alto rendimiento</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Día</span>
+        <div class="mode-toggle" id="filter-coach-dia">
+          <span class="chip active" data-value="todas">Todos</span>
+          <span class="chip" data-value="lunes">Lun</span>
+          <span class="chip" data-value="martes">Mar</span>
+          <span class="chip" data-value="miercoles">Mié</span>
+          <span class="chip" data-value="jueves">Jue</span>
+          <span class="chip" data-value="viernes">Vie</span>
+          <span class="chip" data-value="sabado">Sáb</span>
+          <span class="chip" data-value="domingo">Dom</span>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Horario</span>
+        <div class="mode-toggle" id="filter-coach-horario">
+          <span class="chip active" data-value="todas">Todos</span>
+          <span class="chip" data-value="manana">Mañana</span>
+          <span class="chip" data-value="tarde">Tarde</span>
+          <span class="chip" data-value="noche">Noche</span>
+        </div>
+      </div>
+    </div>
+
     <div class="coach-grid" id="coach-grid"></div>
     <p class="cal-empty" id="coach-empty">Cargando entrenadores…</p>
 
@@ -1084,19 +1165,20 @@
     {tag:'Equipamiento', text:'La ropa técnica no es marketing vacío: la transpiración mal evacuada genera roces y frío en carreras largas.'},
     {tag:'Equipamiento', text:'Un cinturón o chaleco de hidratación se vuelve necesario recién a partir de cierto volumen o clima extremo.'},
     {tag:'Equipamiento', text:'Las plantillas genéricas rara vez resuelven un problema biomecánico complejo — para eso hace falta un profesional.'},
-    {tag:'Pista', text:'La zona de despegue de salto en largo y triple suele estar cerca de la recta — prestale atención si entrenás ahí.'},
+    {tag:'Pista', text:'Para adelantar a alguien en la pista, hacelo siempre por el carril de al lado (por afuera), nunca por dentro.'},
     {tag:'Equipamiento', text:'Un buen sostén deportivo es tan importante como las zapatillas para el rendimiento y el confort.'},
     {tag:'Equipamiento', text:'La vaselina o el bodyglide en las zonas de roce es barato y evita bastante malestar en carreras largas.'}
   ];
 
   function pickDailyTips(n){
-    const now = new Date();
-    const start = new Date(now.getFullYear(), 0, 0);
-    const dayOfYear = Math.floor((now - start) / 86400000);
     const total = TIPS.length;
     const step = Math.floor(total / n); // reparte las picks en tercios del banco para no repetir categoría
     const picked = [];
-    for(let i=0;i<n;i++) picked.push(TIPS[(dayOfYear + i*step) % total]);
+    for(let i=0;i<n;i++){
+      const bucketStart = i*step;
+      const idx = bucketStart + Math.floor(Math.random() * step);
+      picked.push(TIPS[idx % total]);
+    }
     return picked;
   }
 
@@ -1842,27 +1924,231 @@
       .replace(/(^-|-$)/g, '');
   }
 
-  function renderCoachCard(cols){
-    const [, nombre, zona, dias, horarios, formacion, nivel, especialidad, instagram, email, whatsapp, bio] = cols;
+  const CABA_BARRIOS = [
+    'palermo','recoleta','belgrano','caballito','almagro','villa urquiza','nunez','flores','boedo',
+    'puerto madero','villa crespo','colegiales','chacarita','barracas','la boca','san telmo',
+    'constitucion','retiro','balvanera','once','villa del parque','saavedra','villa devoto','liniers',
+    'mataderos','parque patricios','coghlan','villa lugano','villa soldati','monserrat','congreso',
+    'agronomia','paternal','velez sarsfield','parque chas','villa pueyrredon','villa ortuzar',
+    'versalles','floresta','monte castro'
+  ];
+
+  const AMBA_PARTIDOS = [
+    'almirante brown','avellaneda','berazategui','esteban echeverria','ezeiza','florencio varela',
+    'general san martin','hurlingham','ituzaingo','jose c paz','la matanza','lanus','lomas de zamora',
+    'malvinas argentinas','moreno','moron','quilmes','san fernando','san isidro','san miguel','tigre',
+    'tres de febrero','vicente lopez','marcos paz','presidente peron','san vicente','escobar','pilar',
+    'general rodriguez','canuelas'
+  ];
+  const PROVINCIA_NAMES = [
+    'buenos aires','catamarca','chaco','chubut','cordoba','corrientes','entre rios','formosa','jujuy',
+    'la pampa','la rioja','mendoza','misiones','neuquen','rio negro','salta','san juan','san luis',
+    'santa cruz','santa fe','santiago del estero','tierra del fuego','tucuman'
+  ];
+  const PROVINCIA_LABELS = {
+    'buenos aires':'Buenos Aires','catamarca':'Catamarca','chaco':'Chaco','chubut':'Chubut',
+    'cordoba':'Córdoba','corrientes':'Corrientes','entre rios':'Entre Ríos','formosa':'Formosa',
+    'jujuy':'Jujuy','la pampa':'La Pampa','la rioja':'La Rioja','mendoza':'Mendoza','misiones':'Misiones',
+    'neuquen':'Neuquén','rio negro':'Río Negro','salta':'Salta','san juan':'San Juan','san luis':'San Luis',
+    'santa cruz':'Santa Cruz','santa fe':'Santa Fe','santiago del estero':'Santiago del Estero',
+    'tierra del fuego':'Tierra del Fuego','tucuman':'Tucumán'
+  };
+  const CITY_TO_PROVINCE = {
+    'rosario':'Santa Fe','mar del plata':'Buenos Aires','bahia blanca':'Buenos Aires','la plata':'Buenos Aires',
+    'san nicolas':'Buenos Aires','tandil':'Buenos Aires','olavarria':'Buenos Aires'
+  };
+
+  function parseNivel(raw){
+    const t = normStr(raw);
+    const keys = new Set();
+    if(!t) return keys;
+    if(t.includes('inicia')) keys.add('iniciacion');
+    if(t.includes('amateur')) keys.add('amateur');
+    if(t.includes('avanzad')) keys.add('avanzado');
+    if(t.includes('federad')) keys.add('federado');
+    if(t.includes('alto rendimiento') || t.includes('elite') || t.includes('élite')) keys.add('alto_rendimiento');
+    return keys;
+  }
+
+  const DIAS_ORDEN = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
+
+  function parseDias(raw){
+    const t = normStr(raw);
+    const dias = new Set();
+    if(!t) return dias;
+    if(t.includes('todos los dias') || t.includes('a diario') || t.includes('diariamente')){
+      DIAS_ORDEN.forEach(d => dias.add(d));
+      return dias;
+    }
+    // rangos tipo "lunes a viernes"
+    const rangeMatch = t.match(/(lunes|martes|miercoles|jueves|viernes|sabado|domingo)\s*a\s*(lunes|martes|miercoles|jueves|viernes|sabado|domingo)/);
+    if(rangeMatch){
+      const start = DIAS_ORDEN.indexOf(rangeMatch[1]);
+      const end = DIAS_ORDEN.indexOf(rangeMatch[2]);
+      if(start >= 0 && end >= 0){
+        if(start <= end){
+          for(let i=start;i<=end;i++) dias.add(DIAS_ORDEN[i]);
+        } else {
+          for(let i=start;i<DIAS_ORDEN.length;i++) dias.add(DIAS_ORDEN[i]);
+          for(let i=0;i<=end;i++) dias.add(DIAS_ORDEN[i]);
+        }
+      }
+    }
+    // menciones sueltas de días
+    DIAS_ORDEN.forEach(d => { if(t.includes(d)) dias.add(d); });
+    return dias;
+  }
+
+  function parseHorarioBuckets(raw){
+    const buckets = new Set();
+    if(!raw) return buckets;
+    const nums = (raw.match(/\d{1,2}/g) || []).map(n => parseInt(n, 10)).filter(n => n <= 24);
+    nums.forEach(h=>{
+      if(h >= 5 && h < 12) buckets.add('manana');
+      else if(h >= 12 && h < 19) buckets.add('tarde');
+      else buckets.add('noche'); // 19-24 y madrugada (0-4) se cuentan como noche
+    });
+    return buckets;
+  }
+
+  function inferProvincia(zonaText){
+    const t = normStr(zonaText);
+    if(!t) return {provincia: null, isAMBA: false};
+    let isAMBA = false;
+    if(t.includes('amba')) isAMBA = true;
+    for(const partido of AMBA_PARTIDOS){
+      if(t.includes(partido)){ isAMBA = true; break; }
+    }
+    if(t.includes('caba') || t.includes('capital federal') || t.includes('ciudad autonoma')){
+      isAMBA = true;
+      return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA};
+    }
+    for(const barrio of CABA_BARRIOS){
+      if(t.includes(barrio)){
+        isAMBA = true;
+        return {provincia: 'Ciudad Autónoma de Buenos Aires', isAMBA};
+      }
+    }
+    for(const p of PROVINCIA_NAMES){
+      if(t.includes(p)) return {provincia: PROVINCIA_LABELS[p], isAMBA};
+    }
+    for(const city in CITY_TO_PROVINCE){
+      if(t.includes(city)) return {provincia: CITY_TO_PROVINCE[city], isAMBA};
+    }
+    if(isAMBA) return {provincia: 'Buenos Aires', isAMBA};
+    return {provincia: null, isAMBA};
+  }
+
+  let coaches = [];
+
+  function buildCoachCard(c){
     const card = document.createElement('div');
     card.className = 'coach-card';
-    card.id = `entrenador-${slugify(nombre)}`;
+    card.id = `entrenador-${c.slug}`;
     card.innerHTML = `
-      <h3>${nombre || ''}</h3>
-      <p class="coach-meta"><strong>Dónde entrena:</strong> ${zona || ''}</p>
-      <p class="coach-meta"><strong>Días y horarios:</strong> ${[dias, horarios].filter(Boolean).join(' · ')}</p>
-      <p class="coach-meta"><strong>Formación:</strong> ${formacion || ''}</p>
-      <p class="coach-meta"><strong>Nivel:</strong> ${nivel || ''}</p>
-      <p class="coach-meta"><strong>Especialidad:</strong> ${especialidad || ''}</p>
-      ${bio ? `<p class="coach-bio">${bio}</p>` : ''}
+      <h3>${c.nombre || ''}</h3>
+      <p class="coach-meta"><strong>Dónde entrena:</strong> ${c.zona || ''}</p>
+      <p class="coach-meta"><strong>Días:</strong> ${c.dias || ''}</p>
+      <p class="coach-meta"><strong>Horario:</strong> ${c.horarios || ''}</p>
+      <p class="coach-meta"><strong>Formación:</strong> ${c.formacion || ''}</p>
+      <p class="coach-meta"><strong>Nivel:</strong> ${c.nivel || ''}</p>
+      <p class="coach-meta"><strong>Especialidad:</strong> ${c.especialidad || ''}</p>
+      ${c.bio ? `<p class="coach-bio">${c.bio}</p>` : ''}
       <div class="coach-contact">
-        ${email ? `<a href="mailto:${email}">Email</a>` : ''}
-        ${whatsapp ? `<a href="${waLink(whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
-        ${instagram ? `<a href="${igLink(instagram)}" target="_blank" rel="noopener">Instagram</a>` : ''}
+        ${c.email ? `<a href="mailto:${c.email}">Email</a>` : ''}
+        ${c.whatsapp ? `<a href="${waLink(c.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+        ${c.instagram ? `<a href="${igLink(c.instagram)}" target="_blank" rel="noopener">Instagram</a>` : ''}
       </div>
     `;
     return card;
   }
+
+  function populateZonaSubfilter(provFilter){
+    const zonaSelect = document.getElementById('coach-filter-zona');
+    zonaSelect.innerHTML = '<option value="todas">Todas</option>';
+    let subset = coaches;
+    if(provFilter === 'AMBA') subset = coaches.filter(c => c.isAMBA);
+    else if(provFilter !== 'todas') subset = coaches.filter(c => c.provincia === provFilter);
+    const zonas = [...new Set(subset.map(c => (c.zona || '').trim()).filter(Boolean))].sort();
+    zonas.forEach(z=>{
+      const opt = document.createElement('option');
+      opt.value = z; opt.textContent = z;
+      zonaSelect.appendChild(opt);
+    });
+  }
+
+  const coachFilterNivel = new Set(['todas']);
+  const coachFilterDia = new Set(['todas']);
+  const coachFilterHorario = new Set(['todas']);
+
+  function applyCoachFilters(){
+    if(!coaches.length) return;
+    const provFilter = document.getElementById('coach-filter-provincia').value;
+    const zonaFilter = document.getElementById('coach-filter-zona').value;
+
+    let filtered = coaches.filter(c=>{
+      if(provFilter === 'AMBA' && !c.isAMBA) return false;
+      if(provFilter !== 'todas' && provFilter !== 'AMBA' && c.provincia !== provFilter) return false;
+      if(zonaFilter !== 'todas' && (c.zona || '').trim() !== zonaFilter) return false;
+      if(!coachFilterNivel.has('todas') && ![...c.nivelKeys].some(k => coachFilterNivel.has(k))) return false;
+      if(!coachFilterDia.has('todas') && ![...c.diasSet].some(d => coachFilterDia.has(d))) return false;
+      if(!coachFilterHorario.has('todas') && ![...c.horarioSet].some(h => coachFilterHorario.has(h))) return false;
+      return true;
+    });
+
+    const grid = document.getElementById('coach-grid');
+    const emptyEl = document.getElementById('coach-empty');
+    grid.innerHTML = '';
+    if(filtered.length === 0){
+      emptyEl.textContent = 'No hay entrenadores que coincidan con esos filtros.';
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+    filtered.forEach(c => grid.appendChild(buildCoachCard(c)));
+  }
+
+  const coachProvSelectEl = document.getElementById('coach-filter-provincia');
+  if(coachProvSelectEl){
+    coachProvSelectEl.addEventListener('change', ()=>{
+      populateZonaSubfilter(coachProvSelectEl.value);
+      applyCoachFilters();
+    });
+  }
+  const coachZonaSelectEl = document.getElementById('coach-filter-zona');
+  if(coachZonaSelectEl) coachZonaSelectEl.addEventListener('change', applyCoachFilters);
+
+  function setupMultiToggleGroup(groupId, selectedSet){
+    const chips = document.querySelectorAll(`#${groupId} .chip`);
+    chips.forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        const val = chip.dataset.value;
+        if(val === 'todas'){
+          selectedSet.clear();
+          selectedSet.add('todas');
+          chips.forEach(c => c.classList.toggle('active', c.dataset.value === 'todas'));
+        } else {
+          selectedSet.delete('todas');
+          document.querySelector(`#${groupId} .chip[data-value="todas"]`).classList.remove('active');
+          if(selectedSet.has(val)){
+            selectedSet.delete(val);
+            chip.classList.remove('active');
+          } else {
+            selectedSet.add(val);
+            chip.classList.add('active');
+          }
+          if(selectedSet.size === 0){
+            selectedSet.add('todas');
+            document.querySelector(`#${groupId} .chip[data-value="todas"]`).classList.add('active');
+          }
+        }
+        applyCoachFilters();
+      });
+    });
+  }
+  setupMultiToggleGroup('filter-coach-nivel', coachFilterNivel);
+  setupMultiToggleGroup('filter-coach-dia', coachFilterDia);
+  setupMultiToggleGroup('filter-coach-horario', coachFilterHorario);
 
   function handleCoachDeepLink(){
     const params = new URLSearchParams(window.location.search);
@@ -1889,12 +2175,17 @@
         emptyEl.textContent = 'Todavía no hay entrenadores cargados. ¡Sé el primero con el botón de abajo!';
         return;
       }
-      const grid = document.getElementById('coach-grid');
-      grid.innerHTML = '';
-      for(let i=1;i<rows.length;i++){
-        grid.appendChild(renderCoachCard(rows[i]));
-      }
-      emptyEl.classList.add('hidden');
+      coaches = rows.slice(1).map(cols=>{
+        const [, nombre, zona, dias, horarios, formacion, nivel, especialidad, instagram, email, whatsapp, bio] = cols;
+        const inf = inferProvincia(zona);
+        return {
+          nombre, zona, dias, horarios, formacion, nivel, especialidad, instagram, email, whatsapp, bio,
+          provincia: inf.provincia, isAMBA: inf.isAMBA, slug: slugify(nombre),
+          nivelKeys: parseNivel(nivel), diasSet: parseDias(dias), horarioSet: parseHorarioBuckets(horarios)
+        };
+      });
+      populateZonaSubfilter('todas');
+      applyCoachFilters();
       handleCoachDeepLink();
     } catch(err){
       emptyEl.textContent = 'No pudimos cargar los entrenadores ahora. Probá recargar la página.';
