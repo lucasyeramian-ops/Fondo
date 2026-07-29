@@ -452,6 +452,7 @@
     font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mint);
     border:1px solid var(--mint);padding:3px 8px;border-radius:20px;
   }
+  .cal-costo{font-size:12px;color:var(--text-dim);margin-top:8px;}
   .cal-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
   .cal-btn{
     flex:1;text-align:center;font-size:12px;padding:9px 10px;border-radius:5px;
@@ -1007,10 +1008,17 @@
         <span class="filter-label">Distancia</span>
         <div class="mode-toggle" id="filter-distancia">
           <span class="chip active" data-value="todas">Todas</span>
+          <span class="chip" data-value="1k">1K</span>
+          <span class="chip" data-value="1.5k">1.5K</span>
+          <span class="chip" data-value="3k">3K</span>
           <span class="chip" data-value="5k">5K</span>
+          <span class="chip" data-value="8k">8K</span>
           <span class="chip" data-value="10k">10K</span>
+          <span class="chip" data-value="15k">15K</span>
           <span class="chip" data-value="21k">21K</span>
+          <span class="chip" data-value="30k">30K</span>
           <span class="chip" data-value="42k">42K</span>
+          <span class="chip" data-value="50k">50K</span>
         </div>
       </div>
       <div class="filter-group">
@@ -1021,6 +1029,7 @@
           <span class="chip" data-value="trail">Trail</span>
           <span class="chip" data-value="pista">Pista</span>
           <span class="chip" data-value="cross">Cross Country</span>
+          <span class="chip" data-value="postas">Postas/Relevos</span>
         </div>
       </div>
       <div class="filter-group">
@@ -1045,6 +1054,7 @@
         <span class="filter-label">Provincia</span>
         <select id="filter-provincia">
           <option value="todas">Todas</option>
+          <option value="AMBA">AMBA</option>
           <option>Buenos Aires</option>
           <option>Catamarca</option>
           <option>Chaco</option>
@@ -1070,6 +1080,26 @@
           <option>Tierra del Fuego</option>
           <option>Tucumán</option>
         </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Horario</span>
+        <div class="mode-toggle" id="filter-horario">
+          <span class="chip active" data-value="todas">Todos</span>
+          <span class="chip" data-value="manana">Mañana</span>
+          <span class="chip" data-value="tarde">Tarde</span>
+          <span class="chip" data-value="noche">Noche</span>
+        </div>
+        <p class="filter-hint">Mañana: 5 a 12hs · Tarde: 12 a 19hs · Noche: 19 a 5hs</p>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Precio</span>
+        <div class="mode-toggle" id="filter-precio">
+          <span class="chip active" data-value="todas">Todos</span>
+          <span class="chip" data-value="gratis">Gratis</span>
+          <span class="chip" data-value="hasta20">Hasta $20.000</span>
+          <span class="chip" data-value="20a40">$20.000-$40.000</span>
+          <span class="chip" data-value="mas40">Más de $40.000</span>
+        </div>
       </div>
     </div>
 
@@ -1866,6 +1896,7 @@
 
   function normalizeTipo(raw){
     const t = (raw || '').toLowerCase();
+    if(t.includes('posta') || t.includes('relevo') || t.includes('equipo')) return {key:'postas', label:'Postas/Relevos'};
     if(t.includes('calle') || t.includes('asfalto')) return {key:'calle', label:'Calle'};
     if(t.includes('trail') || t.includes('monta')) return {key:'trail', label:'Trail'};
     if(t.includes('pista') || t.includes('atletismo')) return {key:'pista', label:'Pista'};
@@ -1877,14 +1908,92 @@
     return (raw || '').split(',').map(s => s.trim()).filter(Boolean);
   }
 
+  const DISTANCE_BUCKETS = [
+    {key:'1k', val:1}, {key:'1.5k', val:1.5}, {key:'3k', val:3}, {key:'5k', val:5},
+    {key:'8k', val:8}, {key:'10k', val:10}, {key:'15k', val:15}, {key:'21k', val:21.0975},
+    {key:'30k', val:30}, {key:'42k', val:42.195}, {key:'50k', val:50}
+  ];
+
   function distanceBucket(tok){
     const num = parseFloat(tok.replace(',', '.'));
     if(isNaN(num)) return null;
-    if(Math.abs(num - 5) <= 0.6) return '5k';
-    if(Math.abs(num - 10) <= 0.9) return '10k';
-    if(Math.abs(num - 21) <= 1.2) return '21k';
-    if(Math.abs(num - 42) <= 1.2) return '42k';
-    return null;
+    let best = null, bestDiff = Infinity;
+    DISTANCE_BUCKETS.forEach(b=>{
+      const diff = Math.abs(num - b.val);
+      if(diff < bestDiff){ bestDiff = diff; best = b; }
+    });
+    if(!best || bestDiff > best.val * 0.15 + 1) return null;
+    return best.key;
+  }
+
+  function horarioBucketFromHour(h){
+    if(h >= 5 && h < 12) return 'manana';
+    if(h >= 12 && h < 19) return 'tarde';
+    return 'noche';
+  }
+
+  function parsePriceValue(str){
+    if(!str) return null;
+    let s = str.toLowerCase().trim();
+    if(s.includes('gratis') || s.includes('libre') || s.includes('sin costo')) return 0;
+    let multiplier = 1;
+    if(s.includes('mil')){ multiplier = 1000; s = s.replace('mil', ''); }
+    s = s.replace(/[^0-9.,]/g, '');
+    if(!s) return null;
+    s = s.replace(/\./g, '').replace(/,/g, '.');
+    const num = parseFloat(s);
+    if(isNaN(num)) return null;
+    return num * multiplier;
+  }
+
+  function getPriceValuesForRace(costo, distancias){
+    if(!costo) return [];
+    if(costo.type === 'flat'){
+      const v = parsePriceValue(costo.value);
+      return v === null ? [] : [v];
+    }
+    const values = [];
+    distancias.forEach(d=>{
+      const precio = getCostoForDistancia(costo, d);
+      const v = parsePriceValue(precio);
+      if(v !== null) values.push(v);
+    });
+    return values;
+  }
+
+  function priceMatchesBucket(values, bucket){
+    if(!values.length) return false;
+    return values.some(v=>{
+      if(bucket === 'gratis') return v === 0;
+      if(bucket === 'hasta20') return v > 0 && v <= 20000;
+      if(bucket === '20a40') return v > 20000 && v <= 40000;
+      if(bucket === 'mas40') return v > 40000;
+      return false;
+    });
+  }
+
+  function parseCosto(raw){
+    if(!raw || !raw.trim()) return null;
+    const clean = raw.trim();
+    if(clean.includes(':')){
+      const map = {};
+      clean.split(';').forEach(pair=>{
+        const idx = pair.indexOf(':');
+        if(idx === -1) return;
+        const dist = pair.slice(0, idx).trim().toLowerCase().replace(/\s+/g, '');
+        const precio = pair.slice(idx + 1).trim();
+        if(dist && precio) map[dist] = precio;
+      });
+      if(Object.keys(map).length) return {type:'per-distance', map};
+    }
+    return {type:'flat', value: clean};
+  }
+
+  function getCostoForDistancia(costo, distanciaLabel){
+    if(!costo) return null;
+    if(costo.type === 'flat') return costo.value;
+    const key = (distanciaLabel || '').trim().toLowerCase().replace(/\s+/g, '');
+    return costo.map[key] || null;
   }
 
   function toGCalDateStr(d){
@@ -1920,7 +2029,12 @@
       <h3>${r.nombre || ''}</h3>
       <p class="cal-meta">${r.ubicacion || ''}</p>
       <span class="cal-badge">${r.tipoLabel}</span>
-      <div class="cal-distances">${r.distancias.map(d => `<span>${d}</span>`).join('')}</div>
+      <div class="cal-distances">${r.distancias.map(d => {
+        const precio = getCostoForDistancia(r.costo, d);
+        const showPrice = precio && r.costo && r.costo.type === 'per-distance';
+        return `<span>${d}${showPrice ? ' — $' + precio : ''}</span>`;
+      }).join('')}</div>
+      ${r.costo && r.costo.type === 'flat' ? `<p class="cal-costo">Costo: ${r.costo.value}</p>` : ''}
       <div class="cal-actions">
         <a href="${r.link || '#'}" target="_blank" rel="noopener" class="cal-btn cal-btn-primary">Más información</a>
         <a href="${gcalLink(r)}" target="_blank" rel="noopener" class="cal-btn cal-btn-ghost">+ Google Calendar</a>
@@ -1933,26 +2047,35 @@
     return (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
   }
 
+  const raceFilterDist = new Set(['todas']);
+  const raceFilterTipo = new Set(['todas']);
+  const raceFilterHorario = new Set(['todas']);
+  const raceFilterPrecio = new Set(['todas']);
+
   function applyFilters(){
     if(!races.length) return;
-    const distFilter = getSelectedChipValue('filter-distancia');
-    const tipoFilter = getSelectedChipValue('filter-tipo');
     const mesFilter = document.getElementById('filter-mes').value;
     const provFilter = document.getElementById('filter-provincia').value;
     const provFilterNorm = normStr(provFilter);
 
     let filtered = races.filter(r=>{
-      if(distFilter !== 'todas' && !r.distanceBuckets.includes(distFilter)) return false;
-      if(tipoFilter !== 'todas' && r.tipoKey !== tipoFilter) return false;
+      if(!raceFilterDist.has('todas') && !r.distanceBuckets.some(b => raceFilterDist.has(b))) return false;
+      if(!raceFilterTipo.has('todas') && !raceFilterTipo.has(r.tipoKey)) return false;
       if(mesFilter !== 'todas'){
         if(!r.date || r.date.getMonth() !== parseInt(mesFilter, 10)) return false;
       }
       if(provFilter !== 'todas'){
-        const provNorm = normStr(r.provincia);
-        const match = provNorm.includes(provFilterNorm) || provFilterNorm.includes(provNorm)
-          || (provFilter === 'Ciudad Autónoma de Buenos Aires' && (provNorm.includes('caba') || provNorm.includes('capital federal')));
-        if(!match) return false;
+        if(provFilter === 'AMBA'){
+          if(!r.isAMBA) return false;
+        } else {
+          const provNorm = normStr(r.provincia);
+          const match = provNorm.includes(provFilterNorm) || provFilterNorm.includes(provNorm)
+            || (provFilter === 'Ciudad Autónoma de Buenos Aires' && (provNorm.includes('caba') || provNorm.includes('capital federal')));
+          if(!match) return false;
+        }
       }
+      if(!raceFilterHorario.has('todas') && (!r.horarioBucket || !raceFilterHorario.has(r.horarioBucket))) return false;
+      if(!raceFilterPrecio.has('todas') && ![...raceFilterPrecio].some(b => priceMatchesBucket(r.priceValues, b))) return false;
       return true;
     });
     filtered.sort((a,b)=>{
@@ -1974,20 +2097,10 @@
     filtered.forEach(r => grid.appendChild(buildRaceCard(r)));
   }
 
-  document.querySelectorAll('#filter-distancia .chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{
-      document.querySelectorAll('#filter-distancia .chip').forEach(c=>c.classList.remove('active'));
-      chip.classList.add('active');
-      applyFilters();
-    });
-  });
-  document.querySelectorAll('#filter-tipo .chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{
-      document.querySelectorAll('#filter-tipo .chip').forEach(c=>c.classList.remove('active'));
-      chip.classList.add('active');
-      applyFilters();
-    });
-  });
+  setupMultiToggleGroup('filter-distancia', raceFilterDist, applyFilters);
+  setupMultiToggleGroup('filter-tipo', raceFilterTipo, applyFilters);
+  setupMultiToggleGroup('filter-horario', raceFilterHorario, applyFilters);
+  setupMultiToggleGroup('filter-precio', raceFilterPrecio, applyFilters);
   const provSelectEl = document.getElementById('filter-provincia');
   if(provSelectEl) provSelectEl.addEventListener('change', applyFilters);
   const mesSelectEl = document.getElementById('filter-mes');
@@ -2009,13 +2122,38 @@
       }
 
       races = rows.slice(1).map(cols=>{
-        const [, nombre, fecha, hora, ubicacion, tipoRaw, distanciasRaw, link] = cols;
+        const headers = rows[0];
+        const col = {
+          nombre: findColIndex(headers, ['nombre']),
+          fecha: findColIndex(headers, ['cuando se realiza', 'fecha']),
+          hora: findColIndex(headers, ['hora de largada', 'horario de largada', 'hora']),
+          ubicacion: findColIndex(headers, ['donde se hace', 'ubicacion']),
+          tipo: findColIndex(headers, ['tipo de carrera', 'tipo']),
+          distancias: findColIndex(headers, ['distancias']),
+          link: findColIndex(headers, ['link']),
+          costo: findColIndex(headers, ['costo', 'precio'])
+        };
+        const nombre = col.nombre >= 0 ? cols[col.nombre] : '';
+        const fecha = col.fecha >= 0 ? cols[col.fecha] : '';
+        const hora = col.hora >= 0 ? cols[col.hora] : '';
+        const ubicacion = col.ubicacion >= 0 ? cols[col.ubicacion] : '';
+        const tipoRaw = col.tipo >= 0 ? cols[col.tipo] : '';
+        const distanciasRaw = col.distancias >= 0 ? cols[col.distancias] : '';
+        const link = col.link >= 0 ? cols[col.link] : '';
+        const costoRaw = col.costo >= 0 ? cols[col.costo] : '';
+
         const date = parseRaceDate(fecha, hora);
         const tipo = normalizeTipo(tipoRaw);
         const distancias = parseDistances(distanciasRaw);
         const distanceBuckets = [...new Set(distancias.map(distanceBucket).filter(Boolean))];
-        const provincia = (ubicacion || '').split(',').pop().trim();
-        return { nombre, date, ubicacion, tipoKey: tipo.key, tipoLabel: tipo.label, distancias, distanceBuckets, link, provincia, distanciasRaw };
+        const inf = inferProvincia(ubicacion);
+        const costo = parseCosto(costoRaw);
+        const horarioBucket = date ? horarioBucketFromHour(date.getHours()) : null;
+        const priceValues = getPriceValuesForRace(costo, distancias);
+        return {
+          nombre, date, ubicacion, tipoKey: tipo.key, tipoLabel: tipo.label, distancias, distanceBuckets,
+          link, provincia: inf.provincia, isAMBA: inf.isAMBA, distanciasRaw, costo, horarioBucket, priceValues
+        };
       });
 
       applyFilters();
@@ -2610,7 +2748,7 @@
   const coachZonaSelectEl = document.getElementById('coach-filter-zona');
   if(coachZonaSelectEl) coachZonaSelectEl.addEventListener('change', applyCoachFilters);
 
-  function setupMultiToggleGroup(groupId, selectedSet){
+  function setupMultiToggleGroup(groupId, selectedSet, onChange){
     const chips = document.querySelectorAll(`#${groupId} .chip`);
     chips.forEach(chip=>{
       chip.addEventListener('click', ()=>{
@@ -2634,14 +2772,14 @@
             document.querySelector(`#${groupId} .chip[data-value="todas"]`).classList.add('active');
           }
         }
-        applyCoachFilters();
+        onChange();
       });
     });
   }
-  setupMultiToggleGroup('filter-coach-nivel', coachFilterNivel);
-  setupMultiToggleGroup('filter-coach-dia', coachFilterDia);
-  setupMultiToggleGroup('filter-coach-horario', coachFilterHorario);
-  setupMultiToggleGroup('filter-coach-especialidad', coachFilterEspecialidad);
+  setupMultiToggleGroup('filter-coach-nivel', coachFilterNivel, applyCoachFilters);
+  setupMultiToggleGroup('filter-coach-dia', coachFilterDia, applyCoachFilters);
+  setupMultiToggleGroup('filter-coach-horario', coachFilterHorario, applyCoachFilters);
+  setupMultiToggleGroup('filter-coach-especialidad', coachFilterEspecialidad, applyCoachFilters);
 
   function handleCoachDeepLink(){
     const params = new URLSearchParams(window.location.search);
