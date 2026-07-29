@@ -2196,6 +2196,10 @@
       });
       races = [...carrerasPorNombre.values()];
 
+      // Las carreras cuya fecha ya pasó no se muestran más (las que no tienen fecha clara se mantienen)
+      const ahora = new Date();
+      races = races.filter(r => !r.date || r.date >= ahora);
+
       applyFilters();
     } catch(err){
       emptyEl.textContent = 'No pudimos cargar el calendario ahora. Probá recargar la página.';
