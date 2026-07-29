@@ -1979,14 +1979,14 @@
     const clean = raw.trim();
     if(clean.includes(':')){
       const map = {};
-      clean.split(';').forEach(pair=>{
-        const idx = pair.indexOf(':');
-        if(idx === -1) return;
-        const distText = pair.slice(0, idx).trim();
-        const precio = pair.slice(idx + 1).trim();
+      const pairRegex = /([^\s:;,]+)\s*:\s*([^:;,]+)/g;
+      let match;
+      while((match = pairRegex.exec(clean)) !== null){
+        const distText = match[1].trim();
+        const precio = match[2].trim();
         const bucket = distanceBucket(distText);
         if(bucket && precio) map[bucket] = precio;
-      });
+      }
       if(Object.keys(map).length) return {type:'per-distance', map, raw: clean};
     }
     return {type:'flat', value: clean, raw: clean};
