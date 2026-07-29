@@ -453,6 +453,8 @@
     border:1px solid var(--mint);padding:3px 8px;border-radius:20px;
   }
   .cal-costo{font-size:12px;color:var(--text-dim);margin-top:8px;}
+  .cal-contact{font-size:12px;color:var(--text-dim);margin-top:6px;}
+  .cal-contact a{color:var(--blue);}
   .cal-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
   .cal-btn{
     flex:1;text-align:center;font-size:12px;padding:9px 10px;border-radius:5px;
@@ -1980,20 +1982,21 @@
       clean.split(';').forEach(pair=>{
         const idx = pair.indexOf(':');
         if(idx === -1) return;
-        const dist = pair.slice(0, idx).trim().toLowerCase().replace(/\s+/g, '');
+        const distText = pair.slice(0, idx).trim();
         const precio = pair.slice(idx + 1).trim();
-        if(dist && precio) map[dist] = precio;
+        const bucket = distanceBucket(distText);
+        if(bucket && precio) map[bucket] = precio;
       });
-      if(Object.keys(map).length) return {type:'per-distance', map};
+      if(Object.keys(map).length) return {type:'per-distance', map, raw: clean};
     }
-    return {type:'flat', value: clean};
+    return {type:'flat', value: clean, raw: clean};
   }
 
   function getCostoForDistancia(costo, distanciaLabel){
     if(!costo) return null;
     if(costo.type === 'flat') return costo.value;
-    const key = (distanciaLabel || '').trim().toLowerCase().replace(/\s+/g, '');
-    return costo.map[key] || null;
+    const bucket = distanceBucket(distanciaLabel);
+    return bucket ? (costo.map[bucket] || null) : null;
   }
 
   function toGCalDateStr(d){
@@ -2034,8 +2037,14 @@
         const showPrice = precio && r.costo && r.costo.type === 'per-distance';
         return `<span>${d}${showPrice ? ' — $' + precio : ''}</span>`;
       }).join('')}</div>
-      ${r.costo && r.costo.type === 'flat' ? `<p class="cal-costo">Costo: ${r.costo.value}</p>` : ''}
+      ${(() => {
+        if(!r.costo) return '';
+        if(r.costo.type === 'flat') return `<p class="cal-costo">Costo: ${r.costo.value}</p>`;
+        const algunoMatcheo = r.distancias.some(d => getCostoForDistancia(r.costo, d));
+        return algunoMatcheo ? '' : `<p class="cal-costo">Costo: ${r.costo.raw}</p>`;
+      })()}
       ${!r.link && r.linkRaw ? `<p class="cal-costo"><strong>Inscripción:</strong> ${r.linkRaw}</p>` : ''}
+      ${(r.email || r.instagram) ? `<p class="cal-contact">${r.email ? `<a href="mailto:${r.email}">${r.email}</a>` : ''}${r.email && r.instagram ? ' · ' : ''}${r.instagram ? `<a href="${igLink(r.instagram)}" target="_blank" rel="noopener">${r.instagram}</a>` : ''}</p>` : ''}
       <div class="cal-actions">
         ${r.link ? `<a href="${r.link}" target="_blank" rel="noopener" class="cal-btn cal-btn-primary">Más información</a>` : ''}
         <a href="${gcalLink(r)}" target="_blank" rel="noopener" class="cal-btn cal-btn-ghost">+ Google Calendar</a>
@@ -2128,7 +2137,9 @@
           tipo: findColIndex(headers, ['tipo de carrera', 'tipo']),
           distancias: findColIndex(headers, ['distancias']),
           link: findColIndex(headers, ['link']),
-          costo: findColIndex(headers, ['costo', 'precio'])
+          costo: findColIndex(headers, ['costo', 'precio']),
+          email: findColIndex(headers, ['email']),
+          instagram: findColIndex(headers, ['instagram'])
         };
         const nombre = col.nombre >= 0 ? cols[col.nombre] : '';
         const fecha = col.fecha >= 0 ? cols[col.fecha] : '';
@@ -2138,6 +2149,8 @@
         const distanciasRaw = col.distancias >= 0 ? cols[col.distancias] : '';
         const linkRaw = col.link >= 0 ? cols[col.link] : '';
         const costoRaw = col.costo >= 0 ? cols[col.costo] : '';
+        const email = col.email >= 0 ? cols[col.email].trim() : '';
+        const instagram = col.instagram >= 0 ? cols[col.instagram].trim() : '';
 
         const date = parseRaceDate(fecha, hora);
         const tipo = normalizeTipo(tipoRaw);
@@ -2151,7 +2164,7 @@
         return {
           nombre, date, ubicacion, tipoKey: tipo.key, tipoLabel: tipo.label, distancias, distanceBuckets,
           link, linkRaw: linkRaw ? linkRaw.trim() : '', provincia: inf.provincia, isAMBA: inf.isAMBA,
-          distanciasRaw, costo, horarioBucket, priceValues
+          distanciasRaw, costo, horarioBucket, priceValues, email, instagram
         };
       });
 
