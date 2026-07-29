@@ -1910,6 +1910,10 @@
     return (raw || '').split(',').map(s => s.trim()).filter(Boolean);
   }
 
+  function tieneFormatoDeEquipos(raw){
+    return /\d+\s*x\s*\d+/i.test(raw || '');
+  }
+
   const DISTANCE_BUCKETS = [
     {key:'1k', val:1}, {key:'1.5k', val:1.5}, {key:'3k', val:3}, {key:'5k', val:5},
     {key:'8k', val:8}, {key:'10k', val:10}, {key:'15k', val:15}, {key:'21k', val:21.0975},
@@ -2164,7 +2168,8 @@
         const contacto = col.contacto >= 0 ? cols[col.contacto].trim() : '';
 
         const date = parseRaceDate(fecha, hora);
-        const tipo = normalizeTipo(tipoRaw);
+        let tipo = normalizeTipo(tipoRaw);
+        if(tieneFormatoDeEquipos(distanciasRaw)) tipo = {key:'postas', label:'Postas/Relevos'};
         const distancias = parseDistances(distanciasRaw);
         const distanceBuckets = [...new Set(distancias.map(distanceBucket).filter(Boolean))];
         const inf = inferProvincia(ubicacion);
@@ -2559,7 +2564,7 @@
     'constitucion','retiro','balvanera','once','villa del parque','saavedra','villa devoto','liniers',
     'mataderos','parque patricios','coghlan','villa lugano','villa soldati','monserrat','congreso',
     'agronomia','paternal','velez sarsfield','parque chas','villa pueyrredon','villa ortuzar',
-    'versalles','floresta','monte castro'
+    'versalles','floresta','monte castro','microcentro'
   ];
 
   const AMBA_PARTIDOS = [
