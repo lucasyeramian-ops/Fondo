@@ -1935,7 +1935,7 @@
   function parsePriceValue(str){
     if(!str) return null;
     let s = str.toLowerCase().trim();
-    if(s.includes('gratis') || s.includes('libre') || s.includes('sin costo')) return 0;
+    if(s.includes('gratis') || s.includes('gratuit') || s.includes('libre') || s.includes('sin costo') || s.includes('sin cargo') || s === '0') return 0;
     let multiplier = 1;
     if(s.includes('mil')){ multiplier = 1000; s = s.replace('mil', ''); }
     s = s.replace(/[^0-9.,]/g, '');
@@ -2008,7 +2008,7 @@
       action: 'TEMPLATE',
       text: r.nombre || 'Carrera',
       dates: `${toGCalDateStr(r.date)}/${toGCalDateStr(end)}`,
-      details: `Distancias: ${r.distanciasRaw || ''}. Más info: ${r.link || ''}`,
+      details: `Distancias: ${r.distanciasRaw || ''}. ${r.link ? 'Más info: ' + r.link : (r.linkRaw ? 'Inscripción: ' + r.linkRaw : '')}`,
       location: r.ubicacion || ''
     });
     return `https://calendar.google.com/calendar/render?${params.toString()}`;
@@ -2035,8 +2035,9 @@
         return `<span>${d}${showPrice ? ' — $' + precio : ''}</span>`;
       }).join('')}</div>
       ${r.costo && r.costo.type === 'flat' ? `<p class="cal-costo">Costo: ${r.costo.value}</p>` : ''}
+      ${!r.link && r.linkRaw ? `<p class="cal-costo"><strong>Inscripción:</strong> ${r.linkRaw}</p>` : ''}
       <div class="cal-actions">
-        <a href="${r.link || '#'}" target="_blank" rel="noopener" class="cal-btn cal-btn-primary">Más información</a>
+        ${r.link ? `<a href="${r.link}" target="_blank" rel="noopener" class="cal-btn cal-btn-primary">Más información</a>` : ''}
         <a href="${gcalLink(r)}" target="_blank" rel="noopener" class="cal-btn cal-btn-ghost">+ Google Calendar</a>
       </div>
     `;
@@ -2056,7 +2057,6 @@
     if(!races.length) return;
     const mesFilter = document.getElementById('filter-mes').value;
     const provFilter = document.getElementById('filter-provincia').value;
-    const provFilterNorm = normStr(provFilter);
 
     let filtered = races.filter(r=>{
       if(!raceFilterDist.has('todas') && !r.distanceBuckets.some(b => raceFilterDist.has(b))) return false;
@@ -2068,10 +2068,7 @@
         if(provFilter === 'AMBA'){
           if(!r.isAMBA) return false;
         } else {
-          const provNorm = normStr(r.provincia);
-          const match = provNorm.includes(provFilterNorm) || provFilterNorm.includes(provNorm)
-            || (provFilter === 'Ciudad Autónoma de Buenos Aires' && (provNorm.includes('caba') || provNorm.includes('capital federal')));
-          if(!match) return false;
+          if(r.provincia !== provFilter) return false;
         }
       }
       if(!raceFilterHorario.has('todas') && (!r.horarioBucket || !raceFilterHorario.has(r.horarioBucket))) return false;
@@ -2139,7 +2136,7 @@
         const ubicacion = col.ubicacion >= 0 ? cols[col.ubicacion] : '';
         const tipoRaw = col.tipo >= 0 ? cols[col.tipo] : '';
         const distanciasRaw = col.distancias >= 0 ? cols[col.distancias] : '';
-        const link = col.link >= 0 ? cols[col.link] : '';
+        const linkRaw = col.link >= 0 ? cols[col.link] : '';
         const costoRaw = col.costo >= 0 ? cols[col.costo] : '';
 
         const date = parseRaceDate(fecha, hora);
@@ -2150,9 +2147,11 @@
         const costo = parseCosto(costoRaw);
         const horarioBucket = date ? horarioBucketFromHour(date.getHours()) : null;
         const priceValues = getPriceValuesForRace(costo, distancias);
+        const link = normalizeLink(linkRaw);
         return {
           nombre, date, ubicacion, tipoKey: tipo.key, tipoLabel: tipo.label, distancias, distanceBuckets,
-          link, provincia: inf.provincia, isAMBA: inf.isAMBA, distanciasRaw, costo, horarioBucket, priceValues
+          link, linkRaw: linkRaw ? linkRaw.trim() : '', provincia: inf.provincia, isAMBA: inf.isAMBA,
+          distanciasRaw, costo, horarioBucket, priceValues
         };
       });
 
