@@ -109,21 +109,19 @@
   .btn-solid:hover{transform:translateY(-2px);background:#5CAEEA;}
 
   /* SIGNATURE: Riegel preview in hero */
-  .riegel-preview{
-    margin-top:64px;
-    background:var(--bg-card);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:26px 28px;
-    max-width:560px;
+  .hero-features{margin-top:60px;}
+  .hf-lead{font-size:14px;color:var(--mint);font-weight:600;margin-bottom:18px;}
+  .hf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:760px;}
+  @media (max-width:820px){.hf-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:520px){.hf-grid{grid-template-columns:1fr;}}
+  .hf-item{
+    display:block;background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+    padding:16px 18px;transition:border-color .15s ease, transform .15s ease;
   }
-  .rp-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
-  .rp-field{display:flex;flex-direction:column;gap:4px;}
-  .rp-field span{font-size:12px;color:var(--text-dim);}
-  .rp-field strong{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;}
-  .rp-field.hi strong{color:var(--mint);}
-  .rp-arrow{color:var(--text-dim);font-size:20px;}
-  .rp-note{margin-top:16px;font-size:13px;color:var(--text-dim);}
+  .hf-item:hover{border-color:var(--blue);transform:translateY(-2px);}
+  .hf-icon{font-size:20px;display:block;margin-bottom:8px;}
+  .hf-item strong{display:block;font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;margin-bottom:4px;}
+  .hf-item p{font-size:12px;color:var(--text-dim);}
 
   /* Calculators */
   .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:56px;}
@@ -136,6 +134,14 @@
   .calc-info{color:var(--text-dim);font-size:13px;line-height:1.55;margin-bottom:20px;}
   .calc-info strong{color:var(--text);font-weight:600;}
   .calc-note{color:var(--text-dim);font-size:12px;line-height:1.5;margin-top:12px;}
+  .calc-warning{
+    display:flex;gap:12px;align-items:flex-start;
+    background:rgba(255,107,74,0.08);border:1px solid var(--orange);border-radius:10px;
+    padding:18px 22px;margin-bottom:28px;
+  }
+  .calc-warning-icon{font-size:22px;flex-shrink:0;}
+  .calc-warning span:last-child{font-size:16px;line-height:1.5;}
+  .calc-warning strong{color:var(--orange);}
   .mode-toggle{display:flex;gap:8px;}
   .mode-toggle .chip{cursor:pointer;}
 
@@ -530,13 +536,40 @@
       <a href="#articulos" class="btn btn-ghost">Ver artículos</a>
     </div>
 
-    <div class="riegel-preview" data-reveal>
-      <div class="rp-row">
-        <div class="rp-field"><span>Corriste</span><strong>5K en 20:00</strong></div>
-        <div class="rp-arrow">→</div>
-        <div class="rp-field hi"><span>Tu 10K estimado</span><strong>41:30</strong></div>
+    <div class="hero-features" data-reveal>
+      <p class="hf-lead">Todo esto ya está andando — sin registrarte, sin pagar nada:</p>
+      <div class="hf-grid">
+        <a href="#calculadoras" class="hf-item">
+          <span class="hf-icon">🧮</span>
+          <strong>Calculadoras</strong>
+          <p>Riegel, VDOT, Karvonen y más</p>
+        </a>
+        <a href="#calendario" class="hf-item">
+          <span class="hf-icon">📅</span>
+          <strong>Calendario</strong>
+          <p>Todas las carreras del país</p>
+        </a>
+        <a href="#entrenadores" class="hf-item">
+          <span class="hf-icon">🎓</span>
+          <strong>Entrenadores</strong>
+          <p>Filtrá por zona, nivel y horario</p>
+        </a>
+        <a href="#articulos" class="hf-item">
+          <span class="hf-icon">📝</span>
+          <strong>Artículos</strong>
+          <p>Escritos por corredores reales</p>
+        </a>
+        <a href="#elite" class="hf-item">
+          <span class="hf-icon">🏅</span>
+          <strong>Élite</strong>
+          <p>Atletas verificados de alto nivel</p>
+        </a>
+        <a href="#pacers" class="hf-item">
+          <span class="hf-icon">🏃</span>
+          <strong>Pacers</strong>
+          <p>Próximamente</p>
+        </a>
       </div>
-      <p class="rp-note">Test de Riegel — proyectá tu marca en cualquier distancia a partir de una carrera reciente</p>
     </div>
   </div>
 </section>
@@ -545,12 +578,13 @@
   <div class="wrap">
     <div class="section-label">01 — <span>Calculadoras</span></div>
     <h2 class="section-title">Proyectá tu marca y tu nivel de forma física</h2>
-    <p class="section-intro">Cuatro herramientas clásicas del atletismo, calculadas al instante. Sin tener que buscar la fórmula ni hacer cuentas.</p>
+    <p class="section-intro">Herramientas clásicas del atletismo, calculadas al instante. Sin tener que buscar la fórmula ni hacer cuentas.</p>
 
+    <h3 class="tools-heading" style="margin-top:0;">Calculadoras y utilidades técnicas</h3>
     <div class="calc-grid">
       <div class="calc-card" data-reveal>
         <h3 class="calc-title">Test de Riegel</h3>
-        <p class="calc-info"><strong>Qué es:</strong> una fórmula (Pete Riegel, 1977) que predice cuánto tardarías en correr una distancia distinta a partir de un tiempo ya corrido en otra.<br><strong>Para qué sirve:</strong> fijar objetivos realistas — si sabés tu marca en 10K, estimás qué tiempo te correspondería en otra distancia, o qué distancia te bancás en un tiempo determinado.</p>
+        <p class="calc-info"><strong>Qué es:</strong> una fórmula (Pete Riegel, 1977) que predice cuánto tardarías en correr una distancia distinta a partir de un tiempo ya corrido en otra.<br><strong>Para qué sirve:</strong> fijar objetivos realistas — si sabés tu marca en 10K, estimás qué tiempo te correspondería en otra distancia, o qué distancia te bancás en un tiempo determinado.<br><strong>Ejemplo:</strong> corriste 5K en 20:00 → tu 10K estimado da 41:30.</p>
         <div class="field">
           <label>Distancia corrida</label>
           <select id="riegel-d1">
@@ -685,6 +719,116 @@
       </div>
 
       <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Ritmo ↔ Velocidad</h3>
+        <p class="calc-info"><strong>Qué es:</strong> conversor entre ritmo (min/km) y velocidad (km/h).<br><strong>Para qué sirve:</strong> pasar de una unidad a otra rápido — útil si entrenás con reloj en ritmo pero tu cinta o tu entrenador hablan en km/h (o al revés).</p>
+        <div class="field">
+          <label>Convertir</label>
+          <div class="mode-toggle">
+            <span class="chip active" id="pace-mode-ritmo-btn" onclick="setPaceMode('ritmo')">Ritmo → Vel.</span>
+            <span class="chip" id="pace-mode-vel-btn" onclick="setPaceMode('vel')">Vel. → Ritmo</span>
+          </div>
+        </div>
+        <div class="field time-field" id="pace-ritmo-group">
+          <label>Ritmo (min/km)</label>
+          <div class="time-inputs">
+            <input type="number" id="pace-m" min="0" placeholder="mm" value="5">
+            <span>:</span>
+            <input type="number" id="pace-s" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+        <div class="field hidden" id="pace-vel-group">
+          <label>Velocidad (km/h)</label>
+          <input type="number" id="pace-kmh" min="0" step="0.1" placeholder="ej. 12" value="12">
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcPaceSpeed()">Calcular</button>
+        <div class="calc-result" id="pace-result">El resultado aparece acá</div>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Ritmo desde distancia y tiempo</h3>
+        <p class="calc-info"><strong>Qué es:</strong> calculá a qué ritmo por kilómetro corriste, a partir de la distancia y el tiempo total de una carrera o entrenamiento.<br><strong>Para qué sirve:</strong> saber tu ritmo real sin hacer la cuenta a mano.<br><strong>Ejemplo:</strong> corriste 5K en 16:40 → fuiste a 3:20 /km. Corriste 10K en 50:00 → fuiste a 5:00 /km.</p>
+        <div class="field">
+          <label>Distancia (km)</label>
+          <input type="number" id="pacedt-dist" min="0" step="0.01" placeholder="ej. 5" value="5">
+        </div>
+        <div class="field time-field">
+          <label>Tiempo total</label>
+          <div class="time-inputs">
+            <input type="number" id="pacedt-h" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="pacedt-m" min="0" max="59" placeholder="mm" value="16">
+            <span>:</span>
+            <input type="number" id="pacedt-s" min="0" max="59" placeholder="ss" value="40">
+          </div>
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcPaceFromDistTime()">Calcular</button>
+        <div class="calc-result" id="pacedt-result">Tu ritmo aparece acá</div>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Parciales en pista</h3>
+        <p class="calc-info"><strong>Qué es:</strong> a partir de un tiempo objetivo en una distancia de fondo en pista, calcula a qué ritmo tenés que pasar por vuelta (400m), cada 200m y cada 100m.<br><strong>Para qué sirve:</strong> planificar una carrera de pista o una serie larga sabiendo exactamente qué parciales tenés que marcar.</p>
+        <div class="field">
+          <label>Distancia</label>
+          <select id="track-dist">
+            <option value="800">800m</option>
+            <option value="1500" selected>1500m</option>
+            <option value="3000">3000m</option>
+            <option value="5000">5000m</option>
+            <option value="10000">10000m</option>
+          </select>
+        </div>
+        <div class="field time-field">
+          <label>Tiempo objetivo</label>
+          <div class="time-inputs">
+            <input type="number" id="track-h" min="0" placeholder="hh" value="0">
+            <span>:</span>
+            <input type="number" id="track-m" min="0" max="59" placeholder="mm" value="5">
+            <span>:</span>
+            <input type="number" id="track-s" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcTrack()">Calcular</button>
+        <div class="calc-result" id="track-result">Tus parciales aparecen acá</div>
+        <div class="paces-table" id="track-paces"></div>
+
+        <details class="ref-details">
+          <summary>¿Cómo se usa una pista de atletismo?</summary>
+          <p class="ref-sub" style="margin-top:10px;">Una vuelta completa por el carril 1 (el más interno) son 400m. Se corre en sentido contrario a las agujas del reloj. Las líneas curvas pintadas en el piso marcan las distintas largadas: en carreras que dan vueltas completas por varios carriles (como los 400m), la largada está escalonada porque el carril exterior recorre más distancia en la misma vuelta. Para carreras de fondo (800m en adelante) generalmente se larga desde una línea curva y enseguida todos se meten al carril 1. Las marcas blancas cada 100m sobre el carril 1 sirven para controlar parciales durante el entrenamiento.</p>
+        </details>
+      </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Ajuste por clima</h3>
+        <p class="calc-info"><strong>Qué es:</strong> una corrección de ritmo basada en el punto de rocío (temperatura + humedad combinadas).<br><strong>Para qué sirve:</strong> saber cuánto más lento vas a ir en un día caluroso/húmedo aunque tu forma física sea la misma — para no frustrarte por "correr peor" cuando en realidad es el clima.</p>
+        <div class="field time-field">
+          <label>Tu ritmo habitual (min/km)</label>
+          <div class="time-inputs">
+            <input type="number" id="clima-m" min="0" placeholder="mm" value="5">
+            <span>:</span>
+            <input type="number" id="clima-s" min="0" max="59" placeholder="ss" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <label>Temperatura (°C)</label>
+          <input type="number" id="clima-temp" placeholder="ej. 28" value="28">
+        </div>
+        <div class="field">
+          <label>Humedad (%)</label>
+          <input type="number" id="clima-hum" min="0" max="100" placeholder="ej. 70" value="70">
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcClima()">Calcular</button>
+        <div class="calc-result" id="clima-result">Tu ritmo ajustado aparece acá</div>
+      </div>
+    </div>
+
+    <h3 class="tools-heading">Proyectá tu nivel y forma física</h3>
+    <div class="calc-warning">
+      <span class="calc-warning-icon">⚠️</span>
+      <span><strong>Esto es una estimación de campo, no un diagnóstico médico.</strong> Para una evaluación precisa y segura de tu capacidad física, consultá a un profesional de la salud (médico deportólogo).</span>
+    </div>
+    <div class="calc-grid">
+      <div class="calc-card" data-reveal>
         <h3 class="calc-title">VDOT</h3>
         <p class="calc-info"><strong>Qué es:</strong> un índice creado por Jack Daniels que resume tu nivel de forma física aeróbica a partir de una marca reciente.<br><strong>Para qué sirve:</strong> calcular tus ritmos de entrenamiento por tipo de sesión — el número solo no le dice mucho a la mayoría, los ritmos sí.</p>
         <div class="field">
@@ -764,96 +908,6 @@
           </table>
         </details>
       </div>
-    </div>
-
-    <div class="tips-block" data-reveal>
-      <h3 class="tips-title">Tips rápidos <span class="tips-count">· Tenemos 100 tips para ayudarte a mejorar</span></h3>
-      <div class="tips-grid" id="tips-grid"></div>
-    </div>
-
-    <h3 class="tools-heading">Calculadoras y utilidades técnicas</h3>
-    <div class="calc-grid">
-      <div class="calc-card" data-reveal>
-        <h3 class="calc-title">Ritmo ↔ Velocidad</h3>
-        <p class="calc-info"><strong>Qué es:</strong> conversor entre ritmo (min/km) y velocidad (km/h).<br><strong>Para qué sirve:</strong> pasar de una unidad a otra rápido — útil si entrenás con reloj en ritmo pero tu cinta o tu entrenador hablan en km/h (o al revés).</p>
-        <div class="field">
-          <label>Convertir</label>
-          <div class="mode-toggle">
-            <span class="chip active" id="pace-mode-ritmo-btn" onclick="setPaceMode('ritmo')">Ritmo → Vel.</span>
-            <span class="chip" id="pace-mode-vel-btn" onclick="setPaceMode('vel')">Vel. → Ritmo</span>
-          </div>
-        </div>
-        <div class="field time-field" id="pace-ritmo-group">
-          <label>Ritmo (min/km)</label>
-          <div class="time-inputs">
-            <input type="number" id="pace-m" min="0" placeholder="mm" value="5">
-            <span>:</span>
-            <input type="number" id="pace-s" min="0" max="59" placeholder="ss" value="0">
-          </div>
-        </div>
-        <div class="field hidden" id="pace-vel-group">
-          <label>Velocidad (km/h)</label>
-          <input type="number" id="pace-kmh" min="0" step="0.1" placeholder="ej. 12" value="12">
-        </div>
-        <button class="btn btn-primary calc-btn" onclick="calcPaceSpeed()">Calcular</button>
-        <div class="calc-result" id="pace-result">El resultado aparece acá</div>
-      </div>
-
-      <div class="calc-card" data-reveal>
-        <h3 class="calc-title">Parciales en pista</h3>
-        <p class="calc-info"><strong>Qué es:</strong> a partir de un tiempo objetivo en una distancia de fondo en pista, calcula a qué ritmo tenés que pasar por vuelta (400m), cada 200m y cada 100m.<br><strong>Para qué sirve:</strong> planificar una carrera de pista o una serie larga sabiendo exactamente qué parciales tenés que marcar.</p>
-        <div class="field">
-          <label>Distancia</label>
-          <select id="track-dist">
-            <option value="800">800m</option>
-            <option value="1500" selected>1500m</option>
-            <option value="3000">3000m</option>
-            <option value="5000">5000m</option>
-            <option value="10000">10000m</option>
-          </select>
-        </div>
-        <div class="field time-field">
-          <label>Tiempo objetivo</label>
-          <div class="time-inputs">
-            <input type="number" id="track-h" min="0" placeholder="hh" value="0">
-            <span>:</span>
-            <input type="number" id="track-m" min="0" max="59" placeholder="mm" value="5">
-            <span>:</span>
-            <input type="number" id="track-s" min="0" max="59" placeholder="ss" value="0">
-          </div>
-        </div>
-        <button class="btn btn-primary calc-btn" onclick="calcTrack()">Calcular</button>
-        <div class="calc-result" id="track-result">Tus parciales aparecen acá</div>
-        <div class="paces-table" id="track-paces"></div>
-
-        <details class="ref-details">
-          <summary>¿Cómo se usa una pista de atletismo?</summary>
-          <p class="ref-sub" style="margin-top:10px;">Una vuelta completa por el carril 1 (el más interno) son 400m. Se corre en sentido contrario a las agujas del reloj. Las líneas curvas pintadas en el piso marcan las distintas largadas: en carreras que dan vueltas completas por varios carriles (como los 400m), la largada está escalonada porque el carril exterior recorre más distancia en la misma vuelta. Para carreras de fondo (800m en adelante) generalmente se larga desde una línea curva y enseguida todos se meten al carril 1. Las marcas blancas cada 100m sobre el carril 1 sirven para controlar parciales durante el entrenamiento.</p>
-        </details>
-      </div>
-
-      <div class="calc-card" data-reveal>
-        <h3 class="calc-title">Ajuste por clima</h3>
-        <p class="calc-info"><strong>Qué es:</strong> una corrección de ritmo basada en el punto de rocío (temperatura + humedad combinadas).<br><strong>Para qué sirve:</strong> saber cuánto más lento vas a ir en un día caluroso/húmedo aunque tu forma física sea la misma — para no frustrarte por "correr peor" cuando en realidad es el clima.</p>
-        <div class="field time-field">
-          <label>Tu ritmo habitual (min/km)</label>
-          <div class="time-inputs">
-            <input type="number" id="clima-m" min="0" placeholder="mm" value="5">
-            <span>:</span>
-            <input type="number" id="clima-s" min="0" max="59" placeholder="ss" value="0">
-          </div>
-        </div>
-        <div class="field">
-          <label>Temperatura (°C)</label>
-          <input type="number" id="clima-temp" placeholder="ej. 28" value="28">
-        </div>
-        <div class="field">
-          <label>Humedad (%)</label>
-          <input type="number" id="clima-hum" min="0" max="100" placeholder="ej. 70" value="70">
-        </div>
-        <button class="btn btn-primary calc-btn" onclick="calcClima()">Calcular</button>
-        <div class="calc-result" id="clima-result">Tu ritmo ajustado aparece acá</div>
-      </div>
 
       <div class="calc-card" data-reveal>
         <h3 class="calc-title">Zonas de Karvonen</h3>
@@ -870,6 +924,40 @@
         <div class="karv-zones" id="karv-zones"></div>
         <p class="calc-note">Para el 100% de precisión hace falta una ergometría con gases o un test de lactato supervisado por un profesional del deporte.</p>
       </div>
+
+      <div class="calc-card" data-reveal>
+        <h3 class="calc-title">Recuperación cardíaca (HRR)</h3>
+        <p class="calc-info"><strong>Qué es:</strong> cuánto baja tu pulso en el primer minuto después de un esfuerzo fuerte. Es uno de los indicadores más usados de salud cardiovascular — cuanto más rápido baja, mejor responde tu corazón al esfuerzo.<br><strong>Para qué sirve:</strong> se puede medir después de cualquier entrenamiento (una serie, una carrera), no requiere un test aparte. Fórmula: <strong>caída = pulso al terminar − pulso 1 minuto después</strong>.</p>
+        <div class="field">
+          <label>Pulso apenas terminás (ppm)</label>
+          <input type="number" id="hrr-post" min="0" placeholder="ej. 165" value="165">
+        </div>
+        <div class="field">
+          <label>Pulso 1 minuto después (ppm)</label>
+          <input type="number" id="hrr-1min" min="0" placeholder="ej. 130" value="130">
+        </div>
+        <button class="btn btn-primary calc-btn" onclick="calcHRR()">Calcular</button>
+        <div class="calc-result" id="hrr-result">Tu recuperación cardíaca aparece acá</div>
+        <p class="calc-note">Una caída muy baja (menos de 12 ppm) puede ser una señal para consultar a un médico, no un diagnóstico en sí mismo.</p>
+
+        <details class="ref-details">
+          <summary>Ver tabla de referencia</summary>
+          <table class="ref-table" style="margin-top:10px;">
+            <thead><tr><th>Caída en 1 minuto</th><th>Clasificación</th></tr></thead>
+            <tbody>
+              <tr><td>Menos de 12 ppm</td><td>Baja</td></tr>
+              <tr><td>12 a 25 ppm</td><td>Regular</td></tr>
+              <tr><td>26 a 40 ppm</td><td>Buena</td></tr>
+              <tr><td>41 ppm o más</td><td>Excelente</td></tr>
+            </tbody>
+          </table>
+        </details>
+      </div>
+    </div>
+
+    <div class="tips-block" data-reveal>
+      <h3 class="tips-title">Tips rápidos <span class="tips-count">· Tenemos 100 tips para ayudarte a mejorar</span></h3>
+      <div class="tips-grid" id="tips-grid"></div>
     </div>
   </div>
 </section>
@@ -1147,9 +1235,9 @@
     <div class="publish-cta" data-reveal>
       <div>
         <h3>¿Cumplís una marca de nivel élite?</h3>
-        <p>Sumate al listado de atletas verificados de FONDO.</p>
+        <p>Escribinos un mensaje directo a <strong>@lucas.yeramian</strong> en Instagram para sumarte al listado de atletas verificados de FONDO.</p>
       </div>
-      <a href="https://docs.google.com/forms/d/e/1FAIpQLSfGxP9AZQOLG6SULlRfASAk5UbFgjQytsDe10-5UP2dp9rz_Q/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-primary">Registrarme como élite</a>
+      <a href="https://instagram.com/lucas.yeramian" target="_blank" rel="noopener" class="btn btn-primary">Escribime por Instagram</a>
     </div>
   </div>
 </section>
@@ -1483,6 +1571,23 @@
     resultEl.classList.add('filled');
   }
 
+  function calcPaceFromDistTime(){
+    const dist = parseFloat(document.getElementById('pacedt-dist').value);
+    const h = parseFloat(document.getElementById('pacedt-h').value) || 0;
+    const m = parseFloat(document.getElementById('pacedt-m').value) || 0;
+    const s = parseFloat(document.getElementById('pacedt-s').value) || 0;
+    const totalSec = h*3600 + m*60 + s;
+    const resultEl = document.getElementById('pacedt-result');
+    if(!dist || dist <= 0 || !totalSec || totalSec <= 0){
+      resultEl.textContent = 'Cargá distancia y tiempo válidos primero';
+      resultEl.classList.remove('filled');
+      return;
+    }
+    const ritmoSeg = totalSec / dist;
+    resultEl.textContent = `Ritmo: ${fmtTime(ritmoSeg)} /km`;
+    resultEl.classList.add('filled');
+  }
+
   function calcTrack(){
     const dist = parseFloat(document.getElementById('track-dist').value);
     const h = parseFloat(document.getElementById('track-h').value) || 0;
@@ -1569,6 +1674,24 @@
       `;
     });
     zonesEl.innerHTML = html;
+  }
+
+  function calcHRR(){
+    const post = parseFloat(document.getElementById('hrr-post').value);
+    const oneMin = parseFloat(document.getElementById('hrr-1min').value);
+    const resultEl = document.getElementById('hrr-result');
+    if(!post || !oneMin || post <= 0 || oneMin <= 0 || oneMin > post){
+      resultEl.textContent = 'Cargá los dos pulsos correctamente (el segundo debe ser menor)';
+      resultEl.classList.remove('filled');
+      return;
+    }
+    const caida = post - oneMin;
+    let nivel = 'Baja';
+    if(caida >= 41) nivel = 'Excelente';
+    else if(caida >= 26) nivel = 'Buena';
+    else if(caida >= 12) nivel = 'Regular';
+    resultEl.textContent = `Caída: ${caida} ppm en 1 minuto · ${nivel}`;
+    resultEl.classList.add('filled');
   }
 
   const cooperTable = {
