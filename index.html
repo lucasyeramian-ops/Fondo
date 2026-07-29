@@ -2022,6 +2022,19 @@
     return active ? active.dataset.value : 'todas';
   }
 
+  function contactLineForRace(contacto){
+    if(!contacto) return '';
+    let html;
+    if(contacto.startsWith('@')){
+      html = `<a href="${igLink(contacto)}" target="_blank" rel="noopener">${contacto}</a>`;
+    } else if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contacto)){
+      html = `<a href="mailto:${contacto}">${contacto}</a>`;
+    } else {
+      html = contacto;
+    }
+    return `<p class="cal-contact">${html}</p>`;
+  }
+
   function buildRaceCard(r){
     const card = document.createElement('div');
     card.className = 'cal-card';
@@ -2044,7 +2057,7 @@
         return algunoMatcheo ? '' : `<p class="cal-costo">Costo: ${r.costo.raw}</p>`;
       })()}
       ${!r.link && r.linkRaw ? `<p class="cal-costo"><strong>Inscripción:</strong> ${r.linkRaw}</p>` : ''}
-      ${(r.email || r.instagram) ? `<p class="cal-contact">${r.email ? `<a href="mailto:${r.email}">${r.email}</a>` : ''}${r.email && r.instagram ? ' · ' : ''}${r.instagram ? `<a href="${igLink(r.instagram)}" target="_blank" rel="noopener">${r.instagram}</a>` : ''}</p>` : ''}
+      ${contactLineForRace(r.contacto)}
       <div class="cal-actions">
         ${r.link ? `<a href="${r.link}" target="_blank" rel="noopener" class="cal-btn cal-btn-primary">Más información</a>` : ''}
         <a href="${gcalLink(r)}" target="_blank" rel="noopener" class="cal-btn cal-btn-ghost">+ Google Calendar</a>
@@ -2138,8 +2151,7 @@
           distancias: findColIndex(headers, ['distancias']),
           link: findColIndex(headers, ['link']),
           costo: findColIndex(headers, ['costo', 'precio']),
-          email: findColIndex(headers, ['email']),
-          instagram: findColIndex(headers, ['instagram'])
+          contacto: findColIndex(headers, ['email', 'instagram'])
         };
         const nombre = col.nombre >= 0 ? cols[col.nombre] : '';
         const fecha = col.fecha >= 0 ? cols[col.fecha] : '';
@@ -2149,8 +2161,7 @@
         const distanciasRaw = col.distancias >= 0 ? cols[col.distancias] : '';
         const linkRaw = col.link >= 0 ? cols[col.link] : '';
         const costoRaw = col.costo >= 0 ? cols[col.costo] : '';
-        const email = col.email >= 0 ? cols[col.email].trim() : '';
-        const instagram = col.instagram >= 0 ? cols[col.instagram].trim() : '';
+        const contacto = col.contacto >= 0 ? cols[col.contacto].trim() : '';
 
         const date = parseRaceDate(fecha, hora);
         const tipo = normalizeTipo(tipoRaw);
@@ -2161,12 +2172,24 @@
         const horarioBucket = date ? horarioBucketFromHour(date.getHours()) : null;
         const priceValues = getPriceValuesForRace(costo, distancias);
         const link = normalizeLink(linkRaw);
+        const marcaTemporal = parseTimestamp(cols[0]);
         return {
           nombre, date, ubicacion, tipoKey: tipo.key, tipoLabel: tipo.label, distancias, distanceBuckets,
           link, linkRaw: linkRaw ? linkRaw.trim() : '', provincia: inf.provincia, isAMBA: inf.isAMBA,
-          distanciasRaw, costo, horarioBucket, priceValues, email, instagram
+          distanciasRaw, costo, horarioBucket, priceValues, contacto, marcaTemporal, slug: slugify(nombre)
         };
       });
+
+      // Si alguien cargó la misma carrera más de una vez, nos quedamos solo con la carga más reciente
+      const carrerasPorNombre = new Map();
+      races.forEach(r=>{
+        const key = r.slug;
+        const previa = carrerasPorNombre.get(key);
+        if(!previa || (r.marcaTemporal && (!previa.marcaTemporal || r.marcaTemporal > previa.marcaTemporal))){
+          carrerasPorNombre.set(key, r);
+        }
+      });
+      races = [...carrerasPorNombre.values()];
 
       applyFilters();
     } catch(err){
