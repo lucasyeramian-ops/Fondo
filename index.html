@@ -254,6 +254,12 @@
     padding:20px 22px;margin-bottom:32px;
   }
   .elite-req-title{font-size:13px;color:var(--text-dim);margin-bottom:14px;}
+  .elite-rotation-note{
+    display:inline-block;font-size:13px;font-weight:600;color:var(--mint);
+    background:rgba(127,217,168,0.08);border:1px solid var(--mint);
+    padding:8px 16px;border-radius:20px;margin-bottom:20px;
+  }
+  .elite-rotation-note:empty{display:none;}
   .elite-req-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
   .elite-requirements .ref-table{font-size:12px;min-width:480px;}
   .elite-requirements .ref-table td:first-child{color:var(--text-dim);text-align:left;font-family:'Inter',sans-serif;}
@@ -1232,6 +1238,7 @@
     <div class="section-label">05 — <span>Artículos</span></div>
     <h2 class="section-title">Escrito por corredores, para corredores</h2>
     <p class="section-intro">Entrenadores, atletas federados y corredores de fondo comparten lo que aprendieron. Si tenés algo para contar, lo publicamos.</p>
+    <p class="filter-hint" style="margin-bottom:24px;">Solo publicamos artículos con contenido real (un Google Doc, un blog, un video de YouTube, etc.) — dejamos afuera los links a redes sociales para evitar que se publique contenido personal en vez de una nota que le sirva al corredor.</p>
 
     <div class="cal-filters" data-reveal>
       <div class="filter-group">
@@ -1297,13 +1304,14 @@
       </div>
     </div>
 
+    <p class="elite-rotation-note" id="elite-rotation-note"></p>
     <div class="elite-grid" id="elite-grid"></div>
     <p class="cal-empty" id="elite-empty">Cargando atletas…</p>
 
     <div class="publish-cta" data-reveal>
       <div>
         <h3>¿Cumplís una marca de nivel élite?</h3>
-        <p>Escribinos un mensaje directo a <strong>@lucas.yeramian</strong> en Instagram para sumarte al listado de atletas verificados de FONDO.</p>
+        <p>Escribime un mensaje directo a <strong>@lucas.yeramian</strong> en Instagram para sumarte al listado de atletas verificados de FONDO.</p>
       </div>
       <a href="https://instagram.com/lucas.yeramian" target="_blank" rel="noopener" class="btn btn-primary">Escribime por Instagram</a>
     </div>
@@ -2334,6 +2342,17 @@
     return -1;
   }
 
+  const SOCIAL_MEDIA_DOMAINS = ['instagram.com', 'facebook.com', 'fb.com', 'twitter.com', 'x.com', 'tiktok.com'];
+
+  function isSocialMediaLink(url){
+    try{
+      const host = new URL(url).hostname.replace(/^www\./, '');
+      return SOCIAL_MEDIA_DOMAINS.some(d => host === d || host.endsWith('.' + d));
+    } catch(err){
+      return false;
+    }
+  }
+
   async function loadArticles(){
     const emptyEl = document.getElementById('articles-empty');
     try{
@@ -2371,7 +2390,7 @@
           foto: resolveImageUrl(col.foto >= 0 ? cols[col.foto] : ''),
           fecha: parseTimestamp(marca)
         };
-      }).filter(a => a.link); // si el link no se pudo interpretar, no se publica
+      }).filter(a => a.link && !isSocialMediaLink(a.link)); // sin link válido, o si es un link a una red social, no se publica
 
       if(articles.length === 0){
         emptyEl.textContent = 'Todavía no hay artículos publicados con un link válido.';
@@ -2471,6 +2490,18 @@
     return card;
   }
 
+  function pickDailyElite(athletes, n){
+    if(athletes.length <= n) return athletes;
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - start) / 86400000);
+    const total = athletes.length;
+    const startIdx = (dayOfYear * n) % total;
+    const picked = [];
+    for(let i=0;i<n;i++) picked.push(athletes[(startIdx + i) % total]);
+    return picked;
+  }
+
   async function loadElite(){
     const emptyEl = document.getElementById('elite-empty');
     try{
@@ -2515,8 +2546,16 @@
 
       const grid = document.getElementById('elite-grid');
       grid.innerHTML = '';
-      eliteAthletes.forEach(a => grid.appendChild(buildEliteCard(a)));
+      const mostrados = pickDailyElite(eliteAthletes, 10);
+      mostrados.forEach(a => grid.appendChild(buildEliteCard(a)));
       emptyEl.classList.add('hidden');
+
+      const noteEl = document.getElementById('elite-rotation-note');
+      if(noteEl){
+        noteEl.textContent = eliteAthletes.length > 10
+          ? `🔄 Mostramos 10 atletas por día — hay ${eliteAthletes.length} en total, mañana le toca a otro grupo.`
+          : `Mostrando los ${eliteAthletes.length} atletas verificados.`;
+      }
     } catch(err){
       emptyEl.textContent = 'No pudimos cargar los atletas ahora. Probá recargar la página.';
     }
