@@ -11,7 +11,7 @@
 <meta property="og:title" content="FONDO — Todo para el corredor">
 <meta property="og:description" content="Calculadoras de ritmo y forma física, calendario de carreras, entrenadores, pacers, artículos y atletas de alto rendimiento verificados. De un atleta, para los atletas.">
 <meta property="og:locale" content="es_AR">
-<!-- Cuando tengas una imagen de portada subida a algún lado (ej. en el mismo repo de GitHub), agregá acá: <meta property="og:image" content="URL_DE_LA_IMAGEN"> -->
+<meta property="og:image" content="fondo-og-image.png">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FONDO — Todo para el corredor">
@@ -153,6 +153,7 @@
   .calc-info{color:var(--text-dim);font-size:13px;line-height:1.55;margin-bottom:20px;}
   .calc-info strong{color:var(--text);font-weight:600;}
   .calc-note{color:var(--text-dim);font-size:12px;line-height:1.5;margin-top:12px;}
+  .calc-standalone-link{display:block;margin-top:14px;font-size:12px;color:var(--blue);}
   .test-insight{
     margin-top:14px;padding:14px 16px;background:var(--bg-card-hi);
     border-left:3px solid var(--blue);border-radius:0 8px 8px 0;
@@ -667,7 +668,7 @@
     <div class="calc-grid">
       <div class="calc-card" data-reveal>
         <h3 class="calc-title">Test de Riegel</h3>
-        <p class="calc-info"><strong>Qué es:</strong> una fórmula (Pete Riegel, 1977) que predice cuánto tardarías en correr una distancia distinta a partir de un tiempo ya corrido en otra.<br><strong>Para qué sirve:</strong> fijar objetivos realistas — si sabés tu marca en 10K, estimás qué tiempo te correspondería en otra distancia, o qué distancia te bancás en un tiempo determinado.<br><strong>Ejemplo:</strong> corriste 5K en 20:00 → tu 10K estimado da 41:30.</p>
+        <p class="calc-info"><strong>Qué es:</strong> una fórmula (Pete Riegel, 1977) que predice cuánto tardarías en correr una distancia distinta a partir de un tiempo ya corrido en otra.<br><strong>Para qué sirve:</strong> fijar objetivos realistas — si sabés tu marca en 10K, estimás qué tiempo te correspondería en otra distancia, o qué distancia te bancás en un tiempo determinado.<br><strong>Ejemplo:</strong> corriste 5K en 20:00 → tu 10K estimado da 41:42.</p>
         <div class="field">
           <label>Distancia corrida</label>
           <select id="riegel-d1">
@@ -731,6 +732,7 @@
 
         <button class="btn btn-primary calc-btn" onclick="calcRiegel()">Calcular</button>
         <div class="calc-result" id="riegel-result">Tu marca estimada aparece acá</div>
+        <a href="calculadora-riegel.html" class="calc-standalone-link">Ver esta calculadora en su propia página →</a>
       </div>
 
       <div class="calc-card" data-reveal>
@@ -934,6 +936,7 @@
         <div class="paces-table" id="vdot-paces"></div>
         <div class="test-insight" id="vdot-insight"></div>
         <p class="calc-note">Es una aproximación, no un valor exacto — lo ideal es consultarlo con tu entrenador.</p>
+        <a href="calculadora-vdot.html" class="calc-standalone-link">Ver esta calculadora en su propia página →</a>
       </div>
 
       <div class="calc-card" data-reveal>
@@ -993,6 +996,7 @@
             </tbody>
           </table>
         </details>
+        <a href="test-de-cooper.html" class="calc-standalone-link">Ver esta calculadora en su propia página →</a>
       </div>
 
       <div class="calc-card" data-reveal>
