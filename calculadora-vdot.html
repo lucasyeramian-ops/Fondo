@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora VDOT online — Estimá tu nivel y ritmos de entrenamiento | FONDO</title>
+<meta name="description" content="Calculá tu VDOT (índice de Jack Daniels) a partir de una marca reciente y obtené tus ritmos de entrenamiento para rodaje, umbral, intervalos y series. Gratis y en español.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FONDO">
+<meta property="og:title" content="Calculadora VDOT online — FONDO">
+<meta property="og:description" content="Calculá tu VDOT y tus ritmos de entrenamiento a partir de una marca reciente. Gratis, en español, para corredores en Argentina.">
+<meta property="og:image" content="fondo-og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231B1E24'/%3E%3Ctext x='32' y='45' font-family='Georgia, serif' font-size='38' font-weight='700' fill='%23FF6B4A' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#1B1E24;--bg-card:#23262D;--bg-card-hi:#2B2F38;--line:#33373F;--text:#EDEAE2;--text-dim:#9A9CA3;--blue:#4A9FE0;--orange:#FF6B4A;--mint:#7FD9A8;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.5;}
+  a{color:inherit;}
+  .wrap{max-width:640px;margin:0 auto;padding:0 24px;}
+  header{padding:24px 0;border-bottom:1px solid var(--line);}
+  .logo{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.06em;}
+  .logo span{color:var(--orange);}
+  main{padding:48px 0;}
+  h1{font-family:'Oswald',sans-serif;font-size:clamp(28px,5vw,38px);font-weight:600;margin-bottom:14px;}
+  .intro{color:var(--text-dim);font-size:15px;margin-bottom:32px;line-height:1.6;}
+  .card{background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:26px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;}
+  .field input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:11px 12px;border-radius:5px;font-family:'Inter',sans-serif;font-size:14px;}
+  .time-inputs{display:flex;align-items:center;gap:6px;}
+  .time-inputs input{text-align:center;}
+  .time-inputs span{color:var(--text-dim);}
+  .btn{display:block;width:100%;text-align:center;background:var(--orange);color:#191114;border:none;padding:13px;border-radius:5px;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px;}
+  .result{margin-top:16px;padding:14px 16px;border-radius:6px;background:var(--bg-card-hi);border:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-dim);text-align:center;}
+  .result.filled{color:var(--mint);border-color:var(--mint);}
+  .paces-table{margin-top:14px;}
+  .pace-row{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:13px;}
+  .pace-row:first-of-type{border-top:none;}
+  .pace-row .mono{font-family:'JetBrains Mono',monospace;color:var(--mint);}
+  .insight{margin-top:14px;padding:14px 16px;background:var(--bg-card-hi);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;font-size:13px;line-height:1.55;}
+  .insight:empty{display:none;}
+  .note{color:var(--text-dim);font-size:12px;margin-top:12px;}
+  .about{margin-top:40px;font-size:14px;color:var(--text-dim);line-height:1.7;}
+  .about h2{font-family:'Oswald',sans-serif;font-size:18px;color:var(--text);margin-bottom:10px;font-weight:600;}
+  footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(--text-dim);text-align:center;}
+  footer a{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="index.html" class="logo">FON<span>DO</span></a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>Calculadora VDOT</h1>
+    <p class="intro">El VDOT es un índice creado por Jack Daniels que resume tu nivel de forma física aeróbica a partir de una marca reciente. Cargá una distancia y un tiempo, y te calculamos tu VDOT y tus ritmos de entrenamiento por tipo de sesión.</p>
+
+    <div class="card">
+      <div class="field">
+        <label>Distancia corrida (metros)</label>
+        <input type="number" id="vdot-dist" min="0" placeholder="ej. 5000" value="5000">
+      </div>
+      <div class="field">
+        <label>Tiempo</label>
+        <div class="time-inputs">
+          <input type="number" id="vdot-h1" min="0" placeholder="hh" value="0">
+          <span>:</span>
+          <input type="number" id="vdot-m1" min="0" max="59" placeholder="mm" value="20">
+          <span>:</span>
+          <input type="number" id="vdot-s1" min="0" max="59" placeholder="ss" value="0">
+        </div>
+      </div>
+      <button class="btn" onclick="calcVDOT()">Calcular</button>
+      <div class="result" id="vdot-result">Tu VDOT estimado aparece acá</div>
+      <div class="paces-table" id="vdot-paces"></div>
+      <div class="insight" id="vdot-insight"></div>
+      <p class="note">Es una aproximación, no un valor exacto — lo ideal es consultarlo con tu entrenador.</p>
+    </div>
+
+    <div class="about">
+      <h2>¿Cómo se calcula el VDOT?</h2>
+      <p>La fórmula (Daniels &amp; Gilbert, 1979) convierte tu marca en una velocidad, estima el % de tu VO2 máx que estuviste usando durante esa carrera, y con eso obtiene tu VDOT. A partir de ese número se calculan los ritmos de rodaje, umbral, intervalos y series que vas a ver arriba una vez que calcules.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    Parte de <a href="index.html">FONDO</a> — calculadoras, calendario de carreras, entrenadores, pacers y más para corredores en Argentina.
+  </div>
+</footer>
+
+<script>
+  function fmtTime(totalSeconds){
+    totalSeconds = Math.round(totalSeconds);
+    const h = Math.floor(totalSeconds/3600);
+    const m = Math.floor((totalSeconds%3600)/60);
+    const s = totalSeconds%60;
+    const pad = n => String(n).padStart(2,'0');
+    return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+  }
+
+  function velocityFromVO2(vo2){
+    const a = 0.000104, b = 0.182258, c = -(4.60 + vo2);
+    return (-b + Math.sqrt(b*b - 4*a*c)) / (2*a);
+  }
+
+  function paceStrFromVelocity(v){
+    const minPerKm = 1000 / v;
+    const min = Math.floor(minPerKm);
+    const sec = Math.round((minPerKm - min) * 60);
+    return `${min}:${String(sec).padStart(2,'0')} /km`;
+  }
+
+  function interpretVDOT(vdot){
+    let texto;
+    if(vdot < 35){
+      texto = 'Estás en la etapa de construir resistencia aeróbica — la base de todo lo que viene después. La constancia es lo que más rinde en esta etapa: seguí sumando rodajes de forma regular y vas a ver resultados.';
+    } else if(vdot < 45){
+      texto = 'Venís entrenando con regularidad y ya se nota en tu marca. Sumar algo de trabajo de ritmo (umbral), además de tus rodajes, puede ayudarte a seguir progresando a tu ritmo.';
+    } else if(vdot < 55){
+      texto = 'Estás en un nivel donde el trabajo específico de series empieza a rendir frutos concretos en tus marcas. Es un lindo momento del camino — seguí así.';
+    } else if(vdot < 65){
+      texto = 'Es un nivel avanzado de verdad — la clase de forma física que te permite exigirte en competencia, del nivel de un corredor federado en Argentina.';
+    } else {
+      texto = 'Estás en un nivel de alto rendimiento — en Argentina, una marca así ya corresponde a corredores de nivel nacional. Un logro grande, para seguir cuidando con buen descanso y planificación.';
+    }
+    return `<span style="display:block;font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;font-weight:600;">Interpretación</span>${texto}`;
+  }
+
+  function calcVDOT(){
+    const dist = parseFloat(document.getElementById('vdot-dist').value);
+    const h1 = parseFloat(document.getElementById('vdot-h1').value) || 0;
+    const m1 = parseFloat(document.getElementById('vdot-m1').value) || 0;
+    const s1 = parseFloat(document.getElementById('vdot-s1').value) || 0;
+    const tSec = h1*3600 + m1*60 + s1;
+    const resultEl = document.getElementById('vdot-result');
+    const pacesEl = document.getElementById('vdot-paces');
+    const insightEl = document.getElementById('vdot-insight');
+    if(!dist || dist <= 0 || !tSec || tSec <= 0){
+      resultEl.textContent = 'Cargá distancia y tiempo válidos primero';
+      resultEl.classList.remove('filled');
+      pacesEl.innerHTML = '';
+      insightEl.innerHTML = '';
+      return;
+    }
+    const tMin = tSec / 60;
+    const v = dist / tMin;
+    const vo2 = -4.60 + 0.182258*v + 0.000104*v*v;
+    const pct = 0.8 + 0.1894393*Math.exp(-0.012778*tMin) + 0.2989558*Math.exp(-0.1932605*tMin);
+    const vdot = vo2 / pct;
+    resultEl.textContent = `VDOT estimado: ${vdot.toFixed(1)}`;
+    resultEl.classList.add('filled');
+    insightEl.innerHTML = interpretVDOT(vdot);
+
+    const zones = [
+      {label:'Rodaje', pct:0.70},
+      {label:'Umbral', pct:0.88},
+      {label:'Intervalos (1000-1200m)', pct:0.975},
+      {label:'Series cortas (200-400m)', pct:1.10}
+    ];
+    let rows = '';
+    zones.forEach(z=>{
+      const vo2z = z.pct * vdot;
+      const vz = velocityFromVO2(vo2z);
+      rows += `<div class="pace-row"><span>${z.label}</span><span class="mono">${paceStrFromVelocity(vz)}</span></div>`;
+    });
+    pacesEl.innerHTML = rows;
+  }
+</script>
+
+</body>
+</html>
