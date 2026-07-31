@@ -1159,6 +1159,12 @@
         </select>
       </div>
       <div class="filter-group">
+        <span class="filter-label">Zona</span>
+        <select id="filter-cal-zona">
+          <option value="todas">Todas</option>
+        </select>
+      </div>
+      <div class="filter-group">
         <span class="filter-label">Horario</span>
         <div class="mode-toggle" id="filter-horario">
           <span class="chip active" data-value="todas">Todos</span>
@@ -2050,7 +2056,8 @@
         priceValues: [41000, 46000, 51000],
         contacto: '',
         marcaTemporal: new Date(2020,0,1),
-        slug: slugify('Maratón del Puente Rosario-Victoria 2026')
+        slug: slugify('Maratón del Puente Rosario-Victoria 2026'),
+        zona: 'Rosario'
       },
       {
         nombre: 'Maratón de Buenos Aires 2026',
@@ -2066,7 +2073,8 @@
         priceValues: [120000],
         contacto: '',
         marcaTemporal: new Date(2020,0,1),
-        slug: slugify('Maratón de Buenos Aires 2026')
+        slug: slugify('Maratón de Buenos Aires 2026'),
+        zona: 'Palermo'
       },
       {
         nombre: 'Media Maratón de Buenos Aires 2026',
@@ -2082,7 +2090,8 @@
         priceValues: [100000],
         contacto: '',
         marcaTemporal: new Date(2020,0,1),
-        slug: slugify('Media Maratón de Buenos Aires 2026')
+        slug: slugify('Media Maratón de Buenos Aires 2026'),
+        zona: 'Palermo'
       }
     ];
   }
@@ -2234,10 +2243,25 @@
   const raceFilterHorario = new Set(['todas']);
   const raceFilterPrecio = new Set(['todas']);
 
+  function populateCalZonaSubfilter(provFilter){
+    const zonaSelect = document.getElementById('filter-cal-zona');
+    zonaSelect.innerHTML = '<option value="todas">Todas</option>';
+    let subset = races;
+    if(provFilter === 'AMBA') subset = races.filter(r => r.isAMBA);
+    else if(provFilter !== 'todas') subset = races.filter(r => r.provincia === provFilter);
+    const zonas = [...new Set(subset.map(r => r.zona).filter(Boolean))].sort();
+    zonas.forEach(z=>{
+      const opt = document.createElement('option');
+      opt.value = z; opt.textContent = z;
+      zonaSelect.appendChild(opt);
+    });
+  }
+
   function applyFilters(){
     if(!races.length) return;
     const mesFilter = document.getElementById('filter-mes').value;
     const provFilter = document.getElementById('filter-provincia').value;
+    const zonaFilter = document.getElementById('filter-cal-zona').value;
 
     let filtered = races.filter(r=>{
       if(!raceFilterDist.has('todas') && !r.distanceBuckets.some(b => raceFilterDist.has(b))) return false;
@@ -2252,6 +2276,7 @@
           if(r.provincia !== provFilter) return false;
         }
       }
+      if(zonaFilter !== 'todas' && r.zona !== zonaFilter) return false;
       if(!raceFilterHorario.has('todas') && (!r.horarioBucket || !raceFilterHorario.has(r.horarioBucket))) return false;
       if(!raceFilterPrecio.has('todas') && ![...raceFilterPrecio].some(b => priceMatchesBucket(r.priceValues, b))) return false;
       return true;
@@ -2280,7 +2305,14 @@
   setupMultiToggleGroup('filter-horario', raceFilterHorario, applyFilters);
   setupMultiToggleGroup('filter-precio', raceFilterPrecio, applyFilters);
   const provSelectEl = document.getElementById('filter-provincia');
-  if(provSelectEl) provSelectEl.addEventListener('change', applyFilters);
+  if(provSelectEl){
+    provSelectEl.addEventListener('change', ()=>{
+      populateCalZonaSubfilter(provSelectEl.value);
+      applyFilters();
+    });
+  }
+  const calZonaSelectEl = document.getElementById('filter-cal-zona');
+  if(calZonaSelectEl) calZonaSelectEl.addEventListener('change', applyFilters);
   const mesSelectEl = document.getElementById('filter-mes');
   if(mesSelectEl) mesSelectEl.addEventListener('change', applyFilters);
 
@@ -2288,6 +2320,7 @@
     const emptyEl = document.getElementById('cal-empty');
     const mostrarSoloDestacadas = () => {
       races = getCarrerasDestacadas().filter(r => !r.date || r.date >= new Date());
+      populateCalZonaSubfilter('todas');
       applyFilters();
     };
     try{
@@ -2332,6 +2365,7 @@
         const distancias = parseDistances(distanciasRaw);
         const distanceBuckets = [...new Set(distancias.map(distanceBucket).filter(Boolean))];
         const inf = inferProvincia(ubicacion);
+        const zona = (ubicacion || '').split(',')[0].trim();
         const costo = parseCosto(costoRaw);
         const horarioBucket = date ? horarioBucketFromHour(date.getHours()) : null;
         const priceValues = getPriceValuesForRace(costo, distancias);
@@ -2339,7 +2373,7 @@
         const marcaTemporal = parseTimestamp(cols[0]);
         return {
           nombre, date, ubicacion, tipoKey: tipo.key, tipoLabel: tipo.label, distancias, distanceBuckets,
-          link, linkRaw: linkRaw ? linkRaw.trim() : '', provincia: inf.provincia, isAMBA: inf.isAMBA,
+          link, linkRaw: linkRaw ? linkRaw.trim() : '', provincia: inf.provincia, isAMBA: inf.isAMBA, zona,
           distanciasRaw, costo, horarioBucket, priceValues, contacto, marcaTemporal, slug: slugify(nombre)
         };
       });
@@ -2363,6 +2397,7 @@
       const ahora = new Date();
       races = races.filter(r => !r.date || r.date >= ahora);
 
+      populateCalZonaSubfilter('todas');
       applyFilters();
     } catch(err){
       mostrarSoloDestacadas();
