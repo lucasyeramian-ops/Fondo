@@ -487,6 +487,11 @@
     padding:16px 20px;margin-bottom:24px;font-size:13px;color:var(--text-dim);line-height:1.5;
   }
   .pacer-cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
+  .pacer-howto{
+    background:rgba(74,159,224,0.08);border:1px solid var(--blue);border-radius:10px;
+    padding:16px 20px;margin-bottom:24px;font-size:13px;color:var(--text-dim);line-height:1.6;
+  }
+  .pacer-howto strong{color:var(--blue);}
   .pacer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
   @media (max-width:820px){.pacer-grid{grid-template-columns:1fr;}}
   .pacer-full-card{
@@ -1153,6 +1158,17 @@
     <div class="pacer-cta-row" data-reveal>
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSdaGUg8DzHEGTBk7XmAJcpnZMMsAExr-VNBPrwfHBMS-9eN9g/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-solid">Ofrecerme como pacer</a>
       <a href="https://docs.google.com/forms/d/e/1FAIpQLSc8eooB54W4Aolfq-AAO4dk2O_gaG9mbrBma-xvmp6PSwVRCw/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-primary">Reservar un pacer</a>
+    </div>
+
+    <div class="pacer-howto" data-reveal>
+      <strong>¿Cómo funciona?</strong> 1) Elegís un pacer de la lista y lo contactás directo por WhatsApp o Instagram para coordinar todo (el formulario de "Reservar" no le avisa nada al pacer). 2) Si llegan a un acuerdo, completá el formulario de "Reservar" para que ese pacer deje de aparecer disponible para esa carrera y no reciba más llamados aparte del tuyo.
+    </div>
+
+    <div class="filter-group" data-reveal style="margin-bottom:20px;">
+      <span class="filter-label">Carrera</span>
+      <select id="filter-pacer-carrera">
+        <option value="todas">Todas</option>
+      </select>
     </div>
 
     <div class="pacer-grid" id="pacer-grid"></div>
@@ -2276,6 +2292,43 @@
     return card;
   }
 
+  function extractRaceName(offerText){
+    return offerText.split(' - ')[0].trim();
+  }
+
+  let allPacers = [];
+
+  function populatePacerCarreraFilter(){
+    const select = document.getElementById('filter-pacer-carrera');
+    const nombres = new Set();
+    allPacers.forEach(p => p.ofertasDisponibles.forEach(o => nombres.add(extractRaceName(o))));
+    select.innerHTML = '<option value="todas">Todas</option>';
+    [...nombres].sort().forEach(n=>{
+      const opt = document.createElement('option');
+      opt.value = n; opt.textContent = n;
+      select.appendChild(opt);
+    });
+  }
+
+  function applyPacerFilter(){
+    const carreraFilter = document.getElementById('filter-pacer-carrera').value;
+    const grid = document.getElementById('pacer-grid');
+    const emptyEl = document.getElementById('pacer-empty');
+
+    const filtrados = carreraFilter === 'todas'
+      ? allPacers
+      : allPacers.filter(p => p.ofertasDisponibles.some(o => extractRaceName(o) === carreraFilter));
+
+    grid.innerHTML = '';
+    if(filtrados.length === 0){
+      emptyEl.textContent = 'No hay pacers disponibles para esa carrera en este momento.';
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+    filtrados.forEach(p => grid.appendChild(buildPacerCard(p)));
+  }
+
   async function loadPacers(){
     const emptyEl = document.getElementById('pacer-empty');
     try{
@@ -2344,15 +2397,15 @@
         return;
       }
 
-      const grid = document.getElementById('pacer-grid');
-      grid.innerHTML = '';
-      pacers.forEach(p => grid.appendChild(buildPacerCard(p)));
-      emptyEl.classList.add('hidden');
+      allPacers = pacers;
+      populatePacerCarreraFilter();
+      applyPacerFilter();
     } catch(err){
       emptyEl.textContent = 'No pudimos cargar los pacers ahora. Probá recargar la página.';
     }
   }
   loadPacers();
+  document.getElementById('filter-pacer-carrera').addEventListener('change', applyPacerFilter);
 
   // --- Entrenadores: carga automática desde el Google Sheet publicado ---
   // --- Artículos: carga automática desde el Google Sheet publicado ---
