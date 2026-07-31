@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Riegel online — Proyectá tu marca en otra distancia | FONDO</title>
+<meta name="description" content="Usá la fórmula de Riegel para predecir cuánto tardarías en correr otra distancia a partir de una marca reciente. Calculadora gratis en español, para corredores en Argentina.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FONDO">
+<meta property="og:title" content="Calculadora de Riegel online — FONDO">
+<meta property="og:description" content="Proyectá tu marca en otra distancia a partir de un tiempo ya corrido, con la fórmula de Riegel. Gratis, en español.">
+<meta property="og:image" content="fondo-og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231B1E24'/%3E%3Ctext x='32' y='45' font-family='Georgia, serif' font-size='38' font-weight='700' fill='%23FF6B4A' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#1B1E24;--bg-card:#23262D;--bg-card-hi:#2B2F38;--line:#33373F;--text:#EDEAE2;--text-dim:#9A9CA3;--blue:#4A9FE0;--orange:#FF6B4A;--mint:#7FD9A8;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.5;}
+  a{color:inherit;}
+  .wrap{max-width:640px;margin:0 auto;padding:0 24px;}
+  header{padding:24px 0;border-bottom:1px solid var(--line);}
+  .logo{font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.06em;}
+  .logo span{color:var(--orange);}
+  main{padding:48px 0;}
+  h1{font-family:'Oswald',sans-serif;font-size:clamp(28px,5vw,38px);font-weight:600;margin-bottom:14px;}
+  .intro{color:var(--text-dim);font-size:15px;margin-bottom:32px;line-height:1.6;}
+  .card{background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:26px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;}
+  .field input,.field select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);padding:11px 12px;border-radius:5px;font-family:'Inter',sans-serif;font-size:14px;}
+  .time-inputs{display:flex;align-items:center;gap:6px;}
+  .time-inputs input{text-align:center;}
+  .time-inputs span{color:var(--text-dim);}
+  .mode-toggle{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:12px;border:1px solid var(--line);padding:6px 13px;border-radius:20px;color:var(--text-dim);cursor:pointer;}
+  .chip.active{border-color:var(--blue);color:var(--blue);}
+  .hidden{display:none;}
+  .btn{display:block;width:100%;text-align:center;background:var(--orange);color:#191114;border:none;padding:13px;border-radius:5px;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px;}
+  .result{margin-top:16px;padding:14px 16px;border-radius:6px;background:var(--bg-card-hi);border:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-dim);text-align:center;}
+  .result.filled{color:var(--mint);border-color:var(--mint);}
+  .about{margin-top:40px;font-size:14px;color:var(--text-dim);line-height:1.7;}
+  .about h2{font-family:'Oswald',sans-serif;font-size:18px;color:var(--text);margin-bottom:10px;font-weight:600;}
+  footer{border-top:1px solid var(--line);padding:28px 0;font-size:13px;color:var(--text-dim);text-align:center;}
+  footer a{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a href="index.html" class="logo">FON<span>DO</span></a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>Calculadora de Riegel</h1>
+    <p class="intro">La fórmula de Riegel (Pete Riegel, 1977) predice cuánto tardarías en correr una distancia distinta a partir de un tiempo ya corrido en otra. Sirve para fijar objetivos realistas: si sabés tu marca en 10K, estimás qué tiempo te correspondería en otra distancia — o qué distancia te bancás en un tiempo determinado.</p>
+
+    <div class="card">
+      <div class="field">
+        <label>Distancia corrida</label>
+        <select id="riegel-d1">
+          <option value="1">1K</option><option value="1.5">1.5K</option><option value="3">3K</option>
+          <option value="5" selected>5K</option><option value="8">8K</option><option value="10">10K</option>
+          <option value="15">15K</option><option value="21.0975">21K</option><option value="30">30K</option>
+          <option value="42.195">42K</option><option value="50">50K</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tiempo</label>
+        <div class="time-inputs">
+          <input type="number" id="riegel-h1" min="0" placeholder="hh" value="0">
+          <span>:</span>
+          <input type="number" id="riegel-m1" min="0" max="59" placeholder="mm" value="20">
+          <span>:</span>
+          <input type="number" id="riegel-s1" min="0" max="59" placeholder="ss" value="0">
+        </div>
+      </div>
+      <div class="field">
+        <label>Estimar por</label>
+        <div class="mode-toggle">
+          <span class="chip active" id="mode-distancia-btn" onclick="setMode('distancia')">Distancia</span>
+          <span class="chip" id="mode-tiempo-btn" onclick="setMode('tiempo')">Tiempo</span>
+        </div>
+      </div>
+      <div class="field" id="distancia-group">
+        <label>Distancia a proyectar</label>
+        <select id="riegel-d2">
+          <option value="1">1K</option><option value="1.5">1.5K</option><option value="3">3K</option>
+          <option value="5">5K</option><option value="8">8K</option><option value="10" selected>10K</option>
+          <option value="15">15K</option><option value="21.0975">21K</option><option value="30">30K</option>
+          <option value="42.195">42K</option><option value="50">50K</option>
+        </select>
+      </div>
+      <div class="field time-field hidden" id="tiempo-group">
+        <label>Tiempo objetivo</label>
+        <div class="time-inputs">
+          <input type="number" id="riegel-h2" min="0" placeholder="hh" value="0">
+          <span>:</span>
+          <input type="number" id="riegel-m2" min="0" max="59" placeholder="mm" value="45">
+          <span>:</span>
+          <input type="number" id="riegel-s2" min="0" max="59" placeholder="ss" value="0">
+        </div>
+      </div>
+      <button class="btn" onclick="calcRiegel()">Calcular</button>
+      <div class="result" id="riegel-result">Tu marca estimada aparece acá</div>
+    </div>
+
+    <div class="about">
+      <h2>Ejemplo</h2>
+      <p>Corriste 5K en 20:00 → tu 10K estimado da 41:42. La fórmula asume una caída de ritmo natural al aumentar la distancia (exponente 1.06), y funciona mejor entre distancias no demasiado alejadas entre sí.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    Parte de <a href="index.html">FONDO</a> — calculadoras, calendario de carreras, entrenadores, pacers y más para corredores en Argentina.
+  </div>
+</footer>
+
+<script>
+  function fmtTime(totalSeconds){
+    totalSeconds = Math.round(totalSeconds);
+    const h = Math.floor(totalSeconds/3600);
+    const m = Math.floor((totalSeconds%3600)/60);
+    const s = totalSeconds%60;
+    const pad = n => String(n).padStart(2,'0');
+    return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+  }
+
+  let mode = 'distancia';
+  function setMode(m){
+    mode = m;
+    document.getElementById('mode-distancia-btn').classList.toggle('active', m==='distancia');
+    document.getElementById('mode-tiempo-btn').classList.toggle('active', m==='tiempo');
+    document.getElementById('distancia-group').classList.toggle('hidden', m!=='distancia');
+    document.getElementById('tiempo-group').classList.toggle('hidden', m!=='tiempo');
+  }
+
+  function calcRiegel(){
+    const d1 = parseFloat(document.getElementById('riegel-d1').value);
+    const h1 = parseFloat(document.getElementById('riegel-h1').value) || 0;
+    const m1 = parseFloat(document.getElementById('riegel-m1').value) || 0;
+    const s1 = parseFloat(document.getElementById('riegel-s1').value) || 0;
+    const t1 = h1*3600 + m1*60 + s1;
+    const resultEl = document.getElementById('riegel-result');
+    if(!t1 || t1 <= 0){
+      resultEl.textContent = 'Cargá un tiempo válido primero';
+      resultEl.classList.remove('filled');
+      return;
+    }
+    if(mode === 'distancia'){
+      const d2 = parseFloat(document.getElementById('riegel-d2').value);
+      const t2 = t1 * Math.pow(d2/d1, 1.06);
+      resultEl.textContent = `Tiempo estimado: ${fmtTime(t2)}`;
+    } else {
+      const h2 = parseFloat(document.getElementById('riegel-h2').value) || 0;
+      const m2 = parseFloat(document.getElementById('riegel-m2').value) || 0;
+      const s2 = parseFloat(document.getElementById('riegel-s2').value) || 0;
+      const t2 = h2*3600 + m2*60 + s2;
+      if(!t2 || t2 <= 0){
+        resultEl.textContent = 'Cargá un tiempo objetivo válido primero';
+        resultEl.classList.remove('filled');
+        return;
+      }
+      const d2 = d1 * Math.pow(t2/t1, 1/1.06);
+      resultEl.textContent = `Distancia estimada: ${d2.toFixed(2)} km`;
+    }
+    resultEl.classList.add('filled');
+  }
+</script>
+
+</body>
+</html>
