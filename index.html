@@ -2037,6 +2037,22 @@
   function getCarrerasDestacadas(){
     return [
       {
+        nombre: 'Maratón del Puente Rosario-Victoria 2026',
+        date: new Date(2026, 7, 30, 8, 0, 0),
+        ubicacion: 'Rosario, Santa Fe',
+        tipoKey: 'calle', tipoLabel: 'Calle',
+        distancias: ['10K', '14K', '21K'], distanceBuckets: ['10k', '15k', '21k'],
+        link: 'https://www.asistire.com.ar/es/eventos/inscribir/id/225/maraton-del-puente-rosario-victoria-2026',
+        linkRaw: '', provincia: 'Santa Fe', isAMBA: false,
+        distanciasRaw: '10K, 14K, 21K',
+        costo: {type:'per-distance', map:{'10k':'41.000 (presencial, sube por tramos)', '15k':'46.000 (presencial, sube por tramos)', '21k':'51.000 (presencial, sube por tramos)'}, raw:'Desde $41.000'},
+        horarioBucket: 'manana',
+        priceValues: [41000, 46000, 51000],
+        contacto: '',
+        marcaTemporal: new Date(2020,0,1),
+        slug: slugify('Maratón del Puente Rosario-Victoria 2026')
+      },
+      {
         nombre: 'Maratón de Buenos Aires 2026',
         date: new Date(2026, 8, 20, 7, 0, 0),
         ubicacion: 'Av. Figueroa Alcorta y Dorrego, Ciudad Autónoma de Buenos Aires',
@@ -2633,6 +2649,15 @@
     return -1;
   }
 
+  function findColIndexExcluding(headers, keywords, exclude){
+    const normHeaders = headers.map(h => normStr(h));
+    for(let i=0;i<normHeaders.length;i++){
+      const h = normHeaders[i];
+      if(keywords.some(k => h.includes(k)) && !exclude.some(k => h.includes(k))) return i;
+    }
+    return -1;
+  }
+
   const SOCIAL_MEDIA_DOMAINS = ['instagram.com', 'facebook.com', 'fb.com', 'twitter.com', 'x.com', 'tiktok.com'];
 
   function isSocialMediaLink(url){
@@ -2662,9 +2687,9 @@
       const headers = rows[0];
       const col = {
         nombre: findColIndex(headers, ['nombre']),
-        contacto: findColIndex(headers, ['mail', 'red']),
+        contacto: findColIndexExcluding(headers, ['instagram', 'red', 'perfil', 'cuenta'], ['articulo']),
         titulo: findColIndex(headers, ['titulo']),
-        link: findColIndex(headers, ['link', 'enlace']),
+        link: findColIndexExcluding(headers, ['link', 'enlace'], ['cuenta', 'instagram', 'perfil', 'red']),
         categoria: findColIndex(headers, ['categoria']),
         foto: findColIndex(headers, ['foto', 'portada', 'imagen'])
       };
