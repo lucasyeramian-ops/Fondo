@@ -481,6 +481,25 @@
     padding:40px;text-align:center;
   }
   .coming-soon p{color:var(--text-dim);margin-top:14px;font-size:14px;}
+
+  .pacer-disclaimer{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;
+    padding:16px 20px;margin-bottom:24px;font-size:13px;color:var(--text-dim);line-height:1.5;
+  }
+  .pacer-cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
+  .pacer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  @media (max-width:820px){.pacer-grid{grid-template-columns:1fr;}}
+  .pacer-full-card{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:20px;
+  }
+  .pacer-full-card h3{font-family:'Oswald',sans-serif;font-size:19px;font-weight:600;margin-bottom:10px;}
+  .pacer-full-card .coach-meta{font-size:13px;color:var(--text-dim);margin-bottom:6px;}
+  .pacer-full-card .coach-meta strong{color:var(--text);font-weight:600;}
+  .pacer-offers{display:flex;flex-direction:column;gap:6px;margin:12px 0;}
+  .pacer-offer-tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mint);
+    border:1px solid var(--mint);padding:5px 10px;border-radius:8px;
+  }
   .pacer-form{
     flex:1;min-width:280px;
     background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:24px;
@@ -1125,12 +1144,19 @@
   <div class="wrap">
     <div class="section-label">03 — <span>Pacers</span></div>
     <h2 class="section-title">Contratá a alguien que te lleve el ritmo</h2>
-    <p class="section-intro">Elegí carrera y ritmo objetivo, y encontrá corredores disponibles con su marca personal y precio por carrera.</p>
+    <p class="section-intro">Corredores que se ofrecen para acompañarte al ritmo exacto que necesitás en tu próxima carrera.</p>
 
-    <div class="coming-soon" data-reveal>
-      <span class="eyebrow" style="margin-bottom:0;">PRÓXIMAMENTE</span>
-      <p>Estamos armando el sistema de matching entre corredores y pacers. Todavía no está disponible.</p>
+    <div class="pacer-disclaimer" data-reveal>
+      FONDO conecta corredores con pacers, pero el acuerdo y el pago se coordinan directamente entre las partes — la plataforma no participa de esa negociación ni se hace responsable por ella. Recomendamos que ambos estén correctamente inscriptos en la carrera antes de coordinar el acompañamiento.
     </div>
+
+    <div class="pacer-cta-row" data-reveal>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSdaGUg8DzHEGTBk7XmAJcpnZMMsAExr-VNBPrwfHBMS-9eN9g/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-solid">Ofrecerme como pacer</a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLSc8eooB54W4Aolfq-AAO4dk2O_gaG9mbrBma-xvmp6PSwVRCw/viewform?usp=header" target="_blank" rel="noopener" class="btn btn-primary">Reservar un pacer</a>
+    </div>
+
+    <div class="pacer-grid" id="pacer-grid"></div>
+    <p class="cal-empty" id="pacer-empty">Cargando pacers…</p>
   </div>
 </section>
 
@@ -2219,6 +2245,114 @@
     }
   }
   loadRaces();
+
+  // --- Pacers: carga y cruce de los dos Sheets (ofertas + reservas) ---
+  const PACER_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSkt-wJB8V_hepTpwX2uW5uE-Z0O1QrAH4dHHDTIlbFpipUpzauG5s1CTFOUUxiv2KFW2E6kXxivjv6/pub?gid=912924377&single=true&output=csv';
+  const RESERVAS_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTklxNJt_1c4PRS6Dd5CrX2S9D6hgjrurB_TqSlc5tWwLcQDAeZ0AmB_eEGRc2f9nVNQWEp88BiXtka/pub?gid=35800239&single=true&output=csv';
+
+  function ofertaDisponible(oferta, pacerSlug, reservas){
+    const ofertaNorm = normStr(oferta);
+    return !reservas.some(res =>
+      slugify(res.pacerNombre) === pacerSlug &&
+      (ofertaNorm.includes(normStr(res.carrera)) || normStr(res.carrera).includes(ofertaNorm))
+    );
+  }
+
+  function buildPacerCard(p){
+    const card = document.createElement('div');
+    card.className = 'pacer-full-card';
+    card.innerHTML = `
+      <h3>${p.nombre || ''}</h3>
+      <p class="coach-meta"><strong>Marca personal:</strong> ${p.marca || ''}</p>
+      <div class="pacer-offers">
+        ${p.ofertasDisponibles.map(o => `<span class="pacer-offer-tag">${o}</span>`).join('')}
+      </div>
+      <div class="coach-contact">
+        ${p.whatsapp ? `<a href="${waLink(p.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+        ${p.instagram ? `<a href="${igLink(p.instagram)}" target="_blank" rel="noopener">Instagram</a>` : ''}
+        ${p.verificacion ? `<a href="${p.verificacion}" target="_blank" rel="noopener">Ver marca</a>` : ''}
+      </div>
+    `;
+    return card;
+  }
+
+  async function loadPacers(){
+    const emptyEl = document.getElementById('pacer-empty');
+    try{
+      const [resPacers, resReservas] = await Promise.all([
+        fetch(PACER_SHEET_CSV),
+        fetch(RESERVAS_SHEET_CSV)
+      ]);
+
+      if(!resPacers.ok){
+        emptyEl.textContent = 'No pudimos cargar los pacers ahora. Probá recargar la página.';
+        return;
+      }
+      const textPacers = await resPacers.text();
+      const rowsPacers = parseCSV(textPacers).filter(r => r.length > 1 && r.some(c => c.trim() !== ''));
+      if(rowsPacers.length < 2){
+        emptyEl.textContent = 'Todavía no hay pacers cargados. ¡Sé el primero con el botón de arriba!';
+        return;
+      }
+
+      let reservas = [];
+      if(resReservas.ok){
+        const textReservas = await resReservas.text();
+        const rowsReservas = parseCSV(textReservas).filter(r => r.length > 1 && r.some(c => c.trim() !== ''));
+        if(rowsReservas.length >= 2){
+          const rHeaders = rowsReservas[0];
+          const rCol = {
+            pacer: findColIndex(rHeaders, ['nombre del pacer', 'pacer']),
+            carrera: findColIndex(rHeaders, ['carrera'])
+          };
+          reservas = rowsReservas.slice(1).map(cols => ({
+            pacerNombre: rCol.pacer >= 0 ? cols[rCol.pacer] : '',
+            carrera: rCol.carrera >= 0 ? cols[rCol.carrera] : ''
+          }));
+        }
+      }
+
+      const headers = rowsPacers[0];
+      const col = {
+        nombre: findColIndex(headers, ['nombre']),
+        marca: findColIndex(headers, ['marca personal']),
+        carreras: findColIndex(headers, ['carrera']),
+        whatsapp: findColIndex(headers, ['whatsapp']),
+        instagram: findColIndex(headers, ['instagram']),
+        verificacion: findColIndex(headers, ['link', 'verifi'])
+      };
+
+      let pacers = rowsPacers.slice(1).map(cols=>{
+        const nombre = col.nombre >= 0 ? cols[col.nombre].trim() : '';
+        const carrerasRaw = col.carreras >= 0 ? cols[col.carreras] : '';
+        const ofertas = carrerasRaw.split(';').map(s => s.trim()).filter(Boolean);
+        const slug = slugify(nombre);
+        const ofertasDisponibles = ofertas.filter(o => ofertaDisponible(o, slug, reservas));
+        return {
+          nombre, slug,
+          marca: col.marca >= 0 ? cols[col.marca] : '',
+          whatsapp: col.whatsapp >= 0 ? cols[col.whatsapp] : '',
+          instagram: col.instagram >= 0 ? cols[col.instagram] : '',
+          verificacion: normalizeLink(col.verificacion >= 0 ? cols[col.verificacion] : ''),
+          ofertasDisponibles
+        };
+      }).filter(p => p.nombre && p.ofertasDisponibles.length > 0);
+
+      if(pacers.length === 0){
+        emptyEl.textContent = 'No hay pacers disponibles en este momento — puede que estén todos reservados.';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      const grid = document.getElementById('pacer-grid');
+      grid.innerHTML = '';
+      pacers.forEach(p => grid.appendChild(buildPacerCard(p)));
+      emptyEl.classList.add('hidden');
+    } catch(err){
+      emptyEl.textContent = 'No pudimos cargar los pacers ahora. Probá recargar la página.';
+    }
+  }
+  loadPacers();
 
   // --- Entrenadores: carga automática desde el Google Sheet publicado ---
   // --- Artículos: carga automática desde el Google Sheet publicado ---
