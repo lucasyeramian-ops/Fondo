@@ -3026,13 +3026,17 @@
     return card;
   }
 
+  function parseZonas(raw){
+    return (raw || '').split(/[,;]/).map(s => s.trim()).filter(Boolean);
+  }
+
   function populateZonaSubfilter(provFilter){
     const zonaSelect = document.getElementById('coach-filter-zona');
     zonaSelect.innerHTML = '<option value="todas">Todas</option>';
     let subset = coaches;
     if(provFilter === 'AMBA') subset = coaches.filter(c => c.isAMBA);
     else if(provFilter !== 'todas') subset = coaches.filter(c => c.provincia === provFilter);
-    const zonas = [...new Set(subset.map(c => (c.zona || '').trim()).filter(Boolean))].sort();
+    const zonas = [...new Set(subset.flatMap(c => parseZonas(c.zona)))].sort();
     zonas.forEach(z=>{
       const opt = document.createElement('option');
       opt.value = z; opt.textContent = z;
@@ -3053,7 +3057,7 @@
     let filtered = coaches.filter(c=>{
       if(provFilter === 'AMBA' && !c.isAMBA) return false;
       if(provFilter !== 'todas' && provFilter !== 'AMBA' && c.provincia !== provFilter) return false;
-      if(zonaFilter !== 'todas' && (c.zona || '').trim() !== zonaFilter) return false;
+      if(zonaFilter !== 'todas' && !parseZonas(c.zona).includes(zonaFilter)) return false;
       if(!coachFilterNivel.has('todas') && ![...c.nivelKeys].some(k => coachFilterNivel.has(k))) return false;
       if(!coachFilterDia.has('todas') && ![...c.diasSet].some(d => coachFilterDia.has(d))) return false;
       if(!coachFilterHorario.has('todas') && ![...c.horarioSet].some(h => coachFilterHorario.has(h))) return false;
