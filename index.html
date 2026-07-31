@@ -1320,7 +1320,7 @@
     <div class="section-label">05 — <span>Artículos</span></div>
     <h2 class="section-title">Escrito por corredores, para corredores</h2>
     <p class="section-intro">Entrenadores, atletas federados y corredores de fondo comparten lo que aprendieron. Si tenés algo para contar, lo publicamos.</p>
-    <p class="filter-hint" style="margin-bottom:24px;">Solo publicamos artículos con contenido real (un Google Doc, un blog, un video de YouTube, etc.) — dejamos afuera los links a redes sociales para evitar que se publique contenido personal en vez de una nota que le sirva al corredor.</p>
+    <p class="filter-hint" style="margin-bottom:24px;">Solo publicamos artículos con contenido real (un Google Doc, un blog, un video de YouTube, etc.) — dejamos afuera los links a redes sociales para evitar que se publique contenido personal en vez de una nota que le sirva al corredor. Tampoco aceptamos links acortados genéricos (share.google, bit.ly, tinyurl, etc.), porque no podemos verificar a dónde llevan realmente. Al enviar tu artículo, pegá la URL completa desde la barra de direcciones del navegador, no un link generado con el botón "Compartir" de una app.</p>
 
     <div class="cal-filters" data-reveal>
       <div class="filter-group">
@@ -2526,11 +2526,16 @@
 
   function normalizeCategoria(raw){
     const t = normStr(raw);
-    if(t.includes('entrenamiento') || t.includes('tecnica')) return {key:'entrenamiento', label:'Entrenamiento y Técnica'};
-    if(t.includes('nutricion') || t.includes('salud')) return {key:'nutricion', label:'Nutrición y Salud'};
-    if(t.includes('equipamiento')) return {key:'equipamiento', label:'Equipamiento'};
-    if(t.includes('comunidad') || t.includes('historia')) return {key:'comunidad', label:'Comunidad e Historias'};
-    if(t.includes('pista') || t.includes('ruta') || t.includes('trail')) return {key:'terreno', label:'Pista/Ruta/Trail'};
+    // Entrenamiento y Técnica: entrenamiento, planes, técnica de carrera, prevención de lesiones
+    if(t.includes('entrenamiento') || t.includes('tecnica') || t.includes('lesion') || t.includes('plan')) return {key:'entrenamiento', label:'Entrenamiento y Técnica'};
+    // Nutrición y Salud: nutrición, hidratación, psicología deportiva
+    if(t.includes('nutricion') || t.includes('hidratacion') || t.includes('salud') || t.includes('psicologia')) return {key:'nutricion', label:'Nutrición y Salud'};
+    // Equipamiento: zapatillas, geles, tecnología, gadgets
+    if(t.includes('equipamiento') || t.includes('zapatilla') || t.includes('gel') || t.includes('tecnologia') || t.includes('gadget') || t.includes('resena')) return {key:'equipamiento', label:'Equipamiento'};
+    // Comunidad e Historias: crónicas, experiencias, entrevistas
+    if(t.includes('comunidad') || t.includes('historia') || t.includes('cronica') || t.includes('experiencia') || t.includes('entrevista')) return {key:'comunidad', label:'Comunidad e Historias'};
+    // Pista/Ruta/Trail: atletismo de pista, ruta, trail running
+    if(t.includes('pista') || t.includes('ruta') || t.includes('trail') || t.includes('atletismo')) return {key:'terreno', label:'Pista/Ruta/Trail'};
     return {key:'otro', label: raw || 'Otro'};
   }
 
@@ -2659,11 +2664,21 @@
   }
 
   const SOCIAL_MEDIA_DOMAINS = ['instagram.com', 'facebook.com', 'fb.com', 'twitter.com', 'x.com', 'tiktok.com'];
+  const URL_SHORTENER_DOMAINS = ['share.google', 'bit.ly', 'tinyurl.com', 'goo.gl', 't.co', 'ow.ly', 'is.gd', 'buff.ly', 'rebrand.ly', 'shorturl.at', 'lnkd.in', 'cutt.ly', 'lnk.bio', 'linktr.ee'];
 
   function isSocialMediaLink(url){
     try{
       const host = new URL(url).hostname.replace(/^www\./, '');
       return SOCIAL_MEDIA_DOMAINS.some(d => host === d || host.endsWith('.' + d));
+    } catch(err){
+      return false;
+    }
+  }
+
+  function isShortenedLink(url){
+    try{
+      const host = new URL(url).hostname.replace(/^www\./, '');
+      return URL_SHORTENER_DOMAINS.some(d => host === d || host.endsWith('.' + d));
     } catch(err){
       return false;
     }
@@ -2706,7 +2721,7 @@
           foto: resolveImageUrl(col.foto >= 0 ? cols[col.foto] : ''),
           fecha: parseTimestamp(marca)
         };
-      }).filter(a => a.link && !isSocialMediaLink(a.link)); // sin link válido, o si es un link a una red social, no se publica
+      }).filter(a => a.link && !isSocialMediaLink(a.link) && !isShortenedLink(a.link)); // sin link válido, red social, o acortador genérico, no se publica
 
       if(articles.length === 0){
         emptyEl.textContent = 'Todavía no hay artículos publicados con un link válido.';
