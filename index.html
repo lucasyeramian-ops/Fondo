@@ -3,7 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fondo — Todo para el corredor</title>
+<title>FONDO — Todo para el corredor</title>
+<meta name="description" content="Calculadoras de ritmo y forma física, calendario de carreras, entrenadores, pacers, artículos y atletas de alto rendimiento verificados. Todo en un solo lugar para la comunidad de corredores en Argentina.">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FONDO">
+<meta property="og:title" content="FONDO — Todo para el corredor">
+<meta property="og:description" content="Calculadoras de ritmo y forma física, calendario de carreras, entrenadores, pacers, artículos y atletas de alto rendimiento verificados. De un atleta, para los atletas.">
+<meta property="og:locale" content="es_AR">
+<!-- Cuando tengas una imagen de portada subida a algún lado (ej. en el mismo repo de GitHub), agregá acá: <meta property="og:image" content="URL_DE_LA_IMAGEN"> -->
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FONDO — Todo para el corredor">
+<meta name="twitter:description" content="Calculadoras, calendario de carreras, entrenadores, pacers, artículos y atletas verificados. Todo para la comunidad de corredores en Argentina.">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231B1E24'/%3E%3Ctext x='32' y='45' font-family='Georgia, serif' font-size='38' font-weight='700' fill='%23FF6B4A' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -234,6 +249,13 @@
     transition:border-color .4s ease, box-shadow .4s ease;
   }
   .coach-highlight{border-color:var(--blue);box-shadow:0 0 0 3px rgba(74,159,224,0.25);}
+  .btn-copy-link{
+    display:block;width:100%;margin-top:12px;background:transparent;color:var(--text-dim);
+    border:1px solid var(--line);border-radius:5px;padding:8px 10px;font-size:12px;
+    font-family:'Inter',sans-serif;cursor:pointer;transition:border-color .15s ease,color .15s ease;
+  }
+  .btn-copy-link:hover{border-color:var(--blue);color:var(--text);}
+  .btn-copy-link.copied{border-color:var(--mint);color:var(--mint);}
   .coach-card h3{font-family:'Inter',sans-serif;text-transform:none;font-size:17px;font-weight:600;margin-bottom:10px;letter-spacing:0;}
   .coach-meta{font-size:13px;color:var(--text-dim);margin-bottom:6px;}
   .coach-meta strong{color:var(--text);font-weight:600;}
@@ -2277,6 +2299,7 @@
   function buildPacerCard(p){
     const card = document.createElement('div');
     card.className = 'pacer-full-card';
+    card.id = `pacer-${p.slug}`;
     card.innerHTML = `
       <h3>${p.nombre || ''}</h3>
       <p class="coach-meta"><strong>Marca personal:</strong> ${p.marca || ''}</p>
@@ -2288,6 +2311,7 @@
         ${p.instagram ? `<a href="${igLink(p.instagram)}" target="_blank" rel="noopener">Instagram</a>` : ''}
         ${p.verificacion ? `<a href="${p.verificacion}" target="_blank" rel="noopener">Ver marca</a>` : ''}
       </div>
+      <button class="btn-copy-link" onclick="copyProfileLink('pacer','${p.slug}',this)">Copiar link de esta ficha</button>
     `;
     return card;
   }
@@ -2327,6 +2351,7 @@
     }
     emptyEl.classList.add('hidden');
     filtrados.forEach(p => grid.appendChild(buildPacerCard(p)));
+    handleGenericDeepLink('pacer', 'pacer');
   }
 
   async function loadPacers(){
@@ -2604,6 +2629,22 @@
     return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;');
   }
 
+  function copyProfileLink(param, slug, btn){
+    const url = `${location.origin}${location.pathname}?${param}=${slug}`;
+    const done = () => {
+      const original = btn.dataset.originalLabel || btn.textContent;
+      btn.dataset.originalLabel = original;
+      btn.textContent = '¡Link copiado!';
+      btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 2000);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done).catch(()=>{ fallbackCopy(url); done(); });
+    } else {
+      fallbackCopy(url); done();
+    }
+  }
+
   function copyAlias(btn){
     const alias = btn.dataset.alias || '';
     const done = () => {
@@ -2636,6 +2677,7 @@
   function buildEliteCard(a){
     const card = document.createElement('div');
     card.className = 'elite-card';
+    card.id = `atleta-${slugify(a.nombre)}`;
     card.innerHTML = `
       <div class="elite-header">
         <div class="elite-avatar">${a.foto ? `<img src="${a.foto}" alt="" onerror="this.parentElement.textContent='${getInitials(a.nombre)}'">` : getInitials(a.nombre)}</div>
@@ -2673,6 +2715,7 @@
           <button class="elite-copy-btn" data-alias="${escAttr(a.alias)}" onclick="copyAlias(this)">Copiar Alias</button>
         </div>
       </div>
+      <button class="btn-copy-link" onclick="copyProfileLink('atleta','${slugify(a.nombre)}',this)">Copiar link de esta ficha</button>
     `;
     return card;
   }
@@ -2734,6 +2777,17 @@
       const grid = document.getElementById('elite-grid');
       grid.innerHTML = '';
       const mostrados = pickDailyElite(eliteAthletes, 10);
+
+      const deepLinkTarget = new URLSearchParams(window.location.search).get('atleta');
+      if(deepLinkTarget){
+        const targetSlug = slugify(deepLinkTarget);
+        const yaEsta = mostrados.some(a => slugify(a.nombre) === targetSlug);
+        if(!yaEsta){
+          const extra = eliteAthletes.find(a => slugify(a.nombre) === targetSlug);
+          if(extra) mostrados.unshift(extra);
+        }
+      }
+
       mostrados.forEach(a => grid.appendChild(buildEliteCard(a)));
       emptyEl.classList.add('hidden');
 
@@ -2743,6 +2797,7 @@
           ? `🔄 Mostramos 10 atletas por día — hay ${eliteAthletes.length} en total, mañana le toca a otro grupo.`
           : `Mostrando los ${eliteAthletes.length} atletas verificados.`;
       }
+      handleGenericDeepLink('atleta', 'atleta');
     } catch(err){
       emptyEl.textContent = 'No pudimos cargar los atletas ahora. Probá recargar la página.';
     }
@@ -2962,6 +3017,7 @@
         ${c.whatsapp ? `<a href="${waLink(c.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
         ${c.instagram ? `<a href="${igLink(c.instagram)}" target="_blank" rel="noopener">Instagram</a>` : ''}
       </div>
+      <button class="btn-copy-link" onclick="copyProfileLink('entrenador','${c.slug}',this)">Copiar link de esta ficha</button>
     `;
     return card;
   }
@@ -3062,7 +3118,18 @@
     if(!target) return;
     const el = document.getElementById(`entrenador-${slugify(target)}`);
     if(!el) return;
-    el.scrollIntoView({behavior:'smooth', block:'center'});
+    try{ el.scrollIntoView({behavior:'smooth', block:'center'}); } catch(err){ /* noop */ }
+    el.classList.add('coach-highlight');
+    setTimeout(()=> el.classList.remove('coach-highlight'), 3000);
+  }
+
+  function handleGenericDeepLink(param, idPrefix){
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get(param);
+    if(!target) return;
+    const el = document.getElementById(`${idPrefix}-${slugify(target)}`);
+    if(!el) return;
+    try{ el.scrollIntoView({behavior:'smooth', block:'center'}); } catch(err){ /* noop */ }
     el.classList.add('coach-highlight');
     setTimeout(()=> el.classList.remove('coach-highlight'), 3000);
   }
