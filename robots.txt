@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lucasyeramian-ops.github.io/Fondo/sitemap.xml
+Sitemap: https://fondorun.ar/sitemap.xml

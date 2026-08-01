@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://lucasyeramian-ops.github.io/Fondo/</loc>
+    <loc>https://fondorun.ar/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://lucasyeramian-ops.github.io/Fondo/calculadora-vdot.html</loc>
+    <loc>https://fondorun.ar/calculadora-vdot.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lucasyeramian-ops.github.io/Fondo/calculadora-riegel.html</loc>
+    <loc>https://fondorun.ar/calculadora-riegel.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lucasyeramian-ops.github.io/Fondo/test-de-cooper.html</loc>
+    <loc>https://fondorun.ar/test-de-cooper.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
